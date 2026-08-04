@@ -1,0 +1,3630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海贼王官网数据 - ONE PIECE</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0c1445 0%, #0a1635 30%, #0d1f4a 60%, #0c1840 100%); min-height: 100vh; color: #fff; position: relative; overflow-x: hidden; }
+        
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: floatCloud 20s infinite ease-in-out;
+        }
+        
+        .cloud:nth-child(1) { width: 300px; height: 100px; top: 10%; left: -150px; animation-duration: 25s; }
+        .cloud:nth-child(2) { width: 250px; height: 80px; top: 25%; left: -200px; animation-duration: 30s; animation-delay: 5s; }
+        .cloud:nth-child(3) { width: 200px; height: 60px; top: 40%; left: -180px; animation-duration: 22s; animation-delay: 10s; }
+        .cloud:nth-child(4) { width: 350px; height: 120px; top: 55%; left: -250px; animation-duration: 28s; animation-delay: 3s; }
+        .cloud:nth-child(5) { width: 180px; height: 50px; top: 70%; left: -160px; animation-duration: 24s; animation-delay: 8s; }
+        
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 500px)); }
+        }
+        
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100px;
+            background: repeating-linear-gradient(90deg, 
+                rgba(0, 150, 255, 0.1) 0px, 
+                rgba(0, 150, 255, 0.1) 50px, 
+                rgba(0, 150, 255, 0.05) 50px, 
+                rgba(0, 150, 255, 0.05) 100px
+            );
+            animation: waveMove 10s infinite linear;
+        }
+        
+        .wave:nth-child(6) { height: 80px; opacity: 0.5; animation-duration: 15s; }
+        .wave:nth-child(7) { height: 60px; opacity: 0.3; animation-duration: 20s; }
+        
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .sunlight {
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.15) 0%, rgba(255, 200, 100, 0.05) 40%, transparent 70%);
+            border-radius: 50%;
+            animation: sunlightPulse 8s infinite ease-in-out;
+        }
+        
+        @keyframes sunlightPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .floating-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite ease-in-out;
+        }
+        
+        .floating-particle:nth-child(8) { top: 15%; left: 20%; animation-duration: 12s; }
+        .floating-particle:nth-child(9) { top: 35%; left: 60%; animation-duration: 18s; animation-delay: 2s; }
+        .floating-particle:nth-child(10) { top: 50%; left: 30%; animation-duration: 14s; animation-delay: 5s; }
+        .floating-particle:nth-child(11) { top: 20%; left: 80%; animation-duration: 16s; animation-delay: 8s; }
+        .floating-particle:nth-child(12) { top: 65%; left: 45%; animation-duration: 13s; animation-delay: 3s; }
+        
+        @keyframes particleFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+        
+        header { background: linear-gradient(90deg, #e94560, #ff6b6b); padding: 15px 20px; box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); display: flex; justify-content: space-between; align-items: center; }
+        header h1 { font-size: 1.8rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); cursor: pointer; }
+        header h1:hover { opacity: 0.9; }
+        header .user-area { display: flex; gap: 12px; align-items: center; }
+        header .login-btn, header .logout-btn { padding: 8px 18px; border: none; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; }
+        header .login-btn { background: rgba(255,255,255,0.2); color: #fff; }
+        header .login-btn:hover { background: rgba(255,255,255,0.3); }
+        header .logout-btn { background: rgba(0,0,0,0.2); color: #fff; }
+        header .logout-btn:hover { background: rgba(0,0,0,0.3); }
+        header .user-info { display: flex; align-items: center; gap: 8px; }
+        header .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(45deg, #00d2ff, #3a7bd5); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        header .theme-toggle { padding: 8px; border: none; border-radius: 50%; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; background: rgba(255,255,255,0.1); color: #fff; }
+        header .theme-toggle:hover { background: rgba(255,255,255,0.2); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        .tabs { display: flex; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; gap: 10px; }
+        .tab-btn { padding: 9px 20px; font-size: 0.95rem; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; background: rgba(255,255,255,0.1); color: #fff; }
+        .tab-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .tab-btn.active { background: linear-gradient(90deg, #e94560, #ff6b6b); box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); }
+
+        .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; margin-bottom: 18px; }
+        .search-box { padding: 9px 18px; font-size: 0.95rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 25px; background: rgba(255,255,255,0.1); color: #fff; outline: none; transition: all 0.3s ease; width: 200px; }
+        .search-box:focus { border-color: #e94560; background: rgba(255,255,255,0.15); }
+        .search-box::placeholder { color: rgba(255,255,255,0.5); }
+
+        .filter-select { padding: 9px 14px; font-size: 0.9rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 25px; background: rgba(255,255,255,0.1); color: #fff; outline: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-select:focus { border-color: #e94560; }
+        .filter-select option { background: #1a1a2e; color: #fff; }
+
+        .sort-btn { padding: 9px 14px; font-size: 0.85rem; border: none; border-radius: 25px; cursor: pointer; background: rgba(255,255,255,0.1); color: #fff; transition: all 0.3s ease; }
+        .sort-btn:hover { background: rgba(255,255,255,0.2); }
+        .sort-btn.active { background: linear-gradient(90deg, #00d2ff, #3a7bd5); }
+
+        .refresh-btn, .export-btn { padding: 9px 22px; font-size: 0.9rem; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; }
+        .refresh-btn { background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: #fff; }
+        .refresh-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); }
+        .refresh-btn.loading { animation: pulse 1.5s infinite; }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 20, 69, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.show { display: flex; }
+        
+        .loading-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            animation: compassSpin 3s linear infinite;
+        }
+        
+        .loading-icon::before {
+            content: '⚓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+        }
+        
+        .loading-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(233, 69, 96, 0.3);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes compassSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ffd93d;
+            font-family: 'Georgia', serif;
+            animation: textPulse 2s infinite ease-in-out;
+        }
+        
+        .loading-subtext {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        
+        .stat-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .stat-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        
+        .stat-value { font-size: 2rem; font-weight: bold; color: #e94560; margin-bottom: 5px; }
+        
+        .stat-label { font-size: 0.9rem; opacity: 0.7; }
+        
+        .chart-section { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .chart-section h3 { font-size: 1.2rem; margin-bottom: 15px; color: #ffd93d; }
+        
+        .chart-container { height: 300px; }
+        
+        .relation-controls { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        
+        .relation-controls select { padding: 10px 15px; border-radius: 8px; background: #fff; color: #000; border: 1px solid rgba(255,255,255,0.2); }
+        .relation-controls select option { background: #fff; color: #000; }
+        
+        .relation-graph-container { background: rgba(255,255,255,0.03); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .relation-list { margin-top: 20px; }
+        
+        .relation-card { display: flex; align-items: center; gap: 15px; background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); color: #000; }
+        .relation-card * { color: #000; }
+        
+        .relation-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        
+        .relation-tag { font-size: 0.8rem; padding: 3px 8px; border-radius: 5px; background: rgba(233, 69, 96, 0.2); color: #e94560; }
+        
+        /* Agent 智能助手样式 */
+        .agent-container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; height: calc(100vh - 200px); min-height: 500px; }
+
+        .agent-header { text-align: center; padding: 20px; background: linear-gradient(135deg, rgba(233, 69, 96, 0.1), rgba(111, 66, 193, 0.1)); border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .agent-header h2 { margin: 0 0 10px; color: #e94560; }
+        .agent-header p { margin: 0; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+
+        .agent-main { display: flex; gap: 20px; flex: 1; overflow: hidden; }
+
+        .agent-chat-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+        .agent-sidebar { width: 300px; display: flex; flex-direction: column; gap: 15px; }
+
+        .history-panel, .shortcuts-panel {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            color: #e94560;
+            font-size: 1rem;
+        }
+
+        .clear-history-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            padding: 4px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .clear-history-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            border-color: #e94560;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(15, 15, 35, 0.5);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .history-item:hover {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: rgba(233, 69, 96, 0.3);
+        }
+
+        .history-item-query {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-item-time {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .shortcut-btn {
+            padding: 10px 8px;
+            background: rgba(15, 15, 35, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .shortcut-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .no-history {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            padding: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .agent-chat { flex: 1; overflow-y: auto; padding: 20px; background: rgba(26, 26, 46, 0.5); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 15px; }
+        
+        .agent-message { display: flex; gap: 12px; align-items: flex-start; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .agent-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        
+        .agent-content { flex: 1; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .agent-message.user { flex-direction: row-reverse; }
+        .agent-message.user .agent-avatar { background: linear-gradient(135deg, #e94560, #6f42c1); }
+        .agent-message.user .agent-content { background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(111, 66, 193, 0.2)); }
+        
+        .agent-message.agent .agent-avatar { background: linear-gradient(135deg, #4ade80, #22c55e); }
+        
+        .agent-content p { margin: 0; line-height: 1.6; white-space: pre-wrap; }
+        
+        .agent-suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .agent-suggestions button { background: rgba(233, 69, 96, 0.2); border: 1px solid rgba(233, 69, 96, 0.3); color: #fff; padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; }
+        .agent-suggestions button:hover { background: rgba(233, 69, 96, 0.4); transform: translateY(-2px); }
+
+        /* 查询结果展示样式 */
+        .result-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 10px;
+        }
+
+        .result-count {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+        }
+
+        .view-toggle button {
+            background: rgba(15, 15, 35, 0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .view-toggle button.active {
+            background: rgba(233, 69, 96, 0.2);
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .result-table th {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            padding: 10px;
+            text-align: left;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-table td {
+            padding: 10px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .result-table tr:hover {
+            background: rgba(233, 69, 96, 0.05);
+        }
+
+        .result-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .result-card {
+            background: rgba(15, 15, 35, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: rgba(233, 69, 96, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .result-card-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .result-card-image.loaded {
+            opacity: 1;
+        }
+
+        .result-card-name {
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .result-card-info {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .agent-input-area { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 20px; 
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .agent-input-area input { 
+            flex: 1; 
+            background: rgba(15, 15, 35, 0.95) !important; 
+            border: 2px solid rgba(233, 69, 96, 0.4) !important; 
+            border-radius: 30px; 
+            padding: 15px 25px; 
+            color: #fff !important; 
+            font-size: 1rem; 
+            outline: none; 
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .agent-input-area input::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+        
+        .agent-input-area input:focus { 
+            border-color: #e94560 !important; 
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+            background: rgba(20, 20, 40, 1) !important;
+        }
+        
+        .agent-input-area button { 
+            background: linear-gradient(135deg, #e94560, #6f42c1) !important; 
+            border: none !important; 
+            color: #fff !important; 
+            padding: 15px 35px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .agent-input-area button:hover { 
+            transform: translateY(-3px) scale(1.02) !important; 
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5) !important;
+            background: linear-gradient(135deg, #ff5a75, #8b5cf7) !important;
+        }
+        
+        .agent-input-area button:active {
+            transform: translateY(-1px);
+        }
+        
+        .agent-loading { display: flex; gap: 5px; align-items: center; padding: 15px; }
+        .agent-loading span { width: 8px; height: 8px; background: #e94560; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .agent-loading span:nth-child(1) { animation-delay: -0.32s; }
+        .agent-loading span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        .share-btn { position: absolute; top: 10px; right: 10px; background: rgba(233, 69, 96, 0.8); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .share-btn:hover { transform: scale(1.1); background: #e94560; }
+        
+        .share-menu { position: absolute; top: 50px; right: 10px; background: rgba(26, 26, 46, 0.95); border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; z-index: 100; border: 1px solid rgba(255,255,255,0.1); }
+        .share-menu.show { display: flex; }
+        .share-option { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .share-option:hover { background: rgba(255,255,255,0.1); }
+        
+        .export-btn { background: linear-gradient(90deg, #4ade80, #22c55e); color: #fff; }
+        .export-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translate(-50%, -50%); } to { opacity: 0; transform: translate(-50%, -40%); } }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+        .card-container { perspective: 1000px; }
+        
+        .card { 
+            width: 100%;
+            height: 380px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .card.flipped { transform: rotateY(180deg); }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .card-front {
+            background: linear-gradient(145deg, #f5e6d3, #e6d4b8);
+            border: 3px solid #8b7355;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .card-front::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b7355' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        
+        .card-header {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px dashed #8b7355;
+            background: rgba(139, 115, 85, 0.1);
+        }
+        
+        .card-wanted {
+            font-family: 'Georgia', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b0000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .card-id {
+            font-size: 0.75rem;
+            color: #6b5344;
+            margin-top: 2px;
+        }
+        
+        .card-photo-frame {
+            margin: 12px;
+            border: 4px solid #8b7355;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            height: 180px;
+            background: #333;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        
+        .card-img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0; 
+            transition: opacity 0.5s ease-in-out; 
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .card-img.loaded { opacity: 1; }
+        .card-img.lazy {
+            background: linear-gradient(135deg, #3d2914 0%, #5c4033 50%, #3d2914 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        .card-avatar {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4a3728 0%, #2d1f14 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 14px;
+            text-align: center;
+            color: #d4af37;
+            font-weight: bold;
+            padding: 10px;
+            line-height: 1.3;
+            border: 2px solid #d4af37;
+        }
+        
+        .card-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e94560 0%, #6f42c1 50%, #0f3460 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 2px solid #d4af37;
+        }
+        .card-placeholder span {
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .news-img, .episode-img { 
+            width: 170px; 
+            height: 120px; 
+            object-fit: cover; 
+            background: linear-gradient(45deg, #2c3e50, #4ca1af); 
+            flex-shrink: 0; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+        }
+        .news-img.loaded, .episode-img.loaded { opacity: 1; }
+        .news-img.lazy, .episode-img.lazy {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .modal-img { 
+            width: 100%; 
+            height: 260px; 
+            object-fit: cover; 
+            border-radius: 15px; 
+            margin-bottom: 16px; 
+            background: linear-gradient(45deg, #2c3e50, #4ca1af); 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+        }
+        .modal-img.loaded { opacity: 1; }
+        .modal-img.lazy {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .ranking-img { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+        }
+        .ranking-img.lazy {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .card-photo-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 4px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* 恶魔果实样式 */
+        .fruit-frame {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .fruit-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .fruit-image.loaded {
+            opacity: 1;
+        }
+
+        .fruit-icon {
+            width: 120px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .fruit-body {
+            width: 100px;
+            height: 100px;
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 -10px 20px rgba(0,0,0,0.3), inset 0 10px 20px rgba(255,255,255,0.1);
+            animation: fruitPulse 3s ease-in-out infinite;
+        }
+
+        .fruit-pattern {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(255,255,255,0.1) 30deg 60deg);
+            animation: fruitPattern 10s linear infinite;
+        }
+
+        .fruit-stem {
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(135deg, #4a7c4e 0%, #2d4a2e 100%);
+            border-radius: 3px 3px 0 0;
+            position: absolute;
+            top: 5px;
+            box-shadow: inset -2px 0 4px rgba(0,0,0,0.3);
+        }
+
+        /* 超人系 - 紫色 */
+        .fruit-icon.paramecia .fruit-body {
+            background: linear-gradient(135deg, #9b59b6 0%, #6c3483 50%, #4a235a 100%);
+        }
+
+        .fruit-icon.paramecia .fruit-pattern {
+            background: repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(255,255,255,0.15) 30deg 60deg);
+        }
+
+        /* 動物系 - 红色 */
+        .fruit-icon.zoan .fruit-body {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 50%, #7b241c 100%);
+        }
+
+        .fruit-icon.zoan .fruit-pattern {
+            background: repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(255,255,255,0.2) 30deg 60deg);
+        }
+
+        /* 自然系 - 蓝色 */
+        .fruit-icon.logia .fruit-body {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 50%, #1a5276 100%);
+        }
+
+        .fruit-icon.logia .fruit-pattern {
+            background: repeating-conic-gradient(from 0deg, transparent 0deg 30deg, rgba(255,255,255,0.18) 30deg 60deg);
+        }
+
+        /* 特殊系 - 金色 */
+        .fruit-icon.special .fruit-body {
+            background: linear-gradient(135deg, #f1c40f 0%, #d4ac0d 50%, #9a7d0a 100%);
+        }
+
+        @keyframes fruitPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes fruitPattern {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .card-content { 
+            padding: 0 15px 15px; 
+            text-align: center;
+        }
+        
+        .card-title { 
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+            color: #3d2914;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+        }
+        
+        .card-bounty {
+            font-family: 'Georgia', serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #b22222;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 0 rgba(255,215,0,0.3);
+        }
+        
+        .card-info { 
+            font-size: 0.75rem; 
+            margin-bottom: 3px; 
+            color: #5c4033; 
+        }
+        
+        .card-info strong { color: #8b4513; }
+        
+        .card-seal {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #8b0000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+        
+        .card-seal::before {
+            content: '海';
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8b0000;
+        }
+        
+        .card-back {
+            background: linear-gradient(145deg, #e6d4b8, #d4c4a8);
+            border: 3px solid #8b7355;
+            transform: rotateY(180deg);
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .card-back-header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #8b7355;
+            padding-bottom: 10px;
+        }
+        
+        .card-back-title {
+            font-family: 'Georgia', serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #3d2914;
+        }
+        
+        .card-back-info {
+            font-size: 0.85rem;
+            color: #5c4033;
+            line-height: 1.8;
+        }
+        
+        .card-back-info .label {
+            font-weight: bold;
+            color: #8b4513;
+            width: 60px;
+            display: inline-block;
+        }
+        
+        .card .favorite-btn { 
+            position: absolute; 
+            top: 8px; 
+            right: 8px; 
+            width: 32px; 
+            height: 32px; 
+            border: none; 
+            border-radius: 50%; 
+            background: rgba(139, 0, 0, 0.8); 
+            color: #fff; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .card .favorite-btn:hover { background: rgba(233, 69, 96, 0.9); transform: scale(1.1); }
+        .card .favorite-btn.favorited { background: rgba(233, 69, 96, 0.9); color: #ffd93d; }
+
+        .news-card, .episode-card { background: rgba(255,255,255,0.05); border-radius: 15px; overflow: hidden; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1); display: flex; margin-bottom: 10px; cursor: pointer; }
+        .news-card:hover, .episode-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: rgba(0, 210, 255, 0.5); }
+        .news-img, .episode-img { width: 170px; height: 120px; object-fit: cover; background: linear-gradient(45deg, #2c3e50, #4ca1af); flex-shrink: 0; opacity: 0; transition: opacity 0.3s ease; }
+        .news-img.loaded, .episode-img.loaded { opacity: 1; }
+        .news-content, .episode-content { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .news-title, .episode-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 6px; color: #00d2ff; }
+        .news-meta, .episode-meta { display: flex; gap: 10px; font-size: 0.78rem; opacity: 0.7; }
+        .news-meta span, .episode-meta span { display: flex; align-items: center; gap: 4px; }
+        .news-meta .category { background: rgba(233, 69, 96, 0.2); padding: 2px 7px; border-radius: 10px; color: #e94560; }
+        .news-meta .date, .episode-meta .date { color: #ffd93d; }
+
+        .empty-state { text-align: center; padding: 40px; opacity: 0.5; }
+        .empty-state h3 { font-size: 1.4rem; margin-bottom: 8px; }
+
+        .pagination { display: flex; justify-content: center; gap: 6px; margin-top: 20px; align-items: center; }
+        .page-btn { padding: 7px 12px; border: none; border-radius: 8px; cursor: pointer; background: rgba(255,255,255,0.1); color: #fff; transition: all 0.3s ease; min-width: 34px; }
+        .page-btn:hover { background: rgba(255,255,255,0.2); }
+        .page-btn.active { background: linear-gradient(90deg, #e94560, #ff6b6b); }
+        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-info { font-size: 0.82rem; opacity: 0.7; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal-overlay.show { display: flex; }
+        .modal { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 20px; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(233, 69, 96, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: modalIn 0.3s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .modal-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.3rem; font-weight: bold; color: #e94560; }
+        .modal-close { width: 36px; height: 36px; border: none; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-size: 1.3rem; cursor: pointer; transition: all 0.3s ease; }
+        .modal-close:hover { background: rgba(233, 69, 96, 0.5); }
+
+        .modal-content { padding: 20px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; color: #ffd93d; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 10px; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem; outline: none; transition: all 0.3s ease; }
+        .form-group input:focus { border-color: #e94560; }
+        .form-group input::placeholder { color: rgba(255,255,255,0.5); }
+
+        .form-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s ease; background: linear-gradient(90deg, #e94560, #ff6b6b); color: #fff; }
+        .form-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); }
+        .form-switch { text-align: center; margin-top: 12px; font-size: 0.85rem; }
+        .form-switch a { color: #00d2ff; cursor: pointer; text-decoration: underline; }
+
+        .modal-img { width: 100%; height: 260px; object-fit: cover; border-radius: 15px; margin-bottom: 16px; background: linear-gradient(45deg, #2c3e50, #4ca1af); opacity: 0; transition: opacity 0.3s ease; }
+        .modal-img.loaded { opacity: 1; }
+
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .detail-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
+        .detail-label { font-size: 0.78rem; color: #ffd93d; margin-bottom: 3px; }
+        .detail-value { font-size: 0.9rem; opacity: 0.9; }
+
+        .detail-description { background: rgba(255,255,255,0.05); padding: 13px; border-radius: 10px; margin-top: 13px; line-height: 1.6; }
+        .detail-description strong { color: #e94560; display: block; margin-bottom: 6px; }
+
+        .stats-bar { display: flex; gap: 6px; margin-top: 15px; }
+        .stat-item { flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: #00d2ff; }
+        .stat-label { font-size: 0.78rem; opacity: 0.7; margin-top: 3px; }
+
+        .compare-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .compare-table th, .compare-table td { padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .compare-table th { background: rgba(233, 69, 96, 0.2); color: #e94560; font-weight: bold; }
+        .compare-table tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+        .ranking-list { display: flex; flex-direction: column; gap: 10px; }
+        .ranking-item { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: pointer; position: relative; }
+        .ranking-item:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .ranking-rank { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
+        .ranking-rank.top1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; }
+        .ranking-rank.top2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #1a1a2e; }
+        .ranking-rank.top3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: #fff; }
+        .ranking-rank.other { background: rgba(255,255,255,0.1); color: #fff; }
+        .ranking-info { flex: 1; }
+        .ranking-name { font-weight: bold; font-size: 1rem; color: #e94560; }
+        .ranking-bounty { font-size: 0.9rem; color: #ffd93d; }
+        .ranking-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; opacity: 0; transition: opacity 0.3s ease; }
+        .ranking-img.loaded { opacity: 1; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .calendar-month { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,210,255,0.1); }
+        .calendar-month-title { font-size: 0.9rem; font-weight: bold; color: #00d2ff; margin-bottom: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .calendar-month-title::before { content: '📅'; }
+        .calendar-days { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+        .calendar-day { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 0.8rem; cursor: pointer; transition: all 0.25s ease; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.03); border: 1px solid transparent; }
+        .calendar-day:hover { background: rgba(0,210,255,0.15); color: #00d2ff; border-color: rgba(0,210,255,0.3); transform: scale(1.05); }
+        .calendar-day.has-birthday { background: linear-gradient(135deg, rgba(233, 69, 96, 0.4), rgba(233, 69, 96, 0.2)); color: #ff6b6b; font-weight: bold; border-color: rgba(233, 69, 96, 0.5); position: relative; }
+        .calendar-day.has-birthday::after { content: '🎂'; font-size: 0.5rem; position: absolute; bottom: 2px; right: 3px; }
+        .calendar-day.has-birthday:hover { background: linear-gradient(135deg, rgba(233, 69, 96, 0.6), rgba(233, 69, 96, 0.4)); color: #ff4757; transform: scale(1.1); box-shadow: 0 0 15px rgba(233, 69, 96, 0.4); }
+        .calendar-day.selected { background: linear-gradient(135deg, #00d2ff, #0099cc); color: #fff; border-color: #00d2ff; }
+        .calendar-day.selected.has-birthday { background: linear-gradient(135deg, #ff6b6b, #e94560); }
+
+        .news-detail-content { max-height: 60vh; overflow-y: auto; }
+        .news-detail-content img { max-width: 100%; border-radius: 10px; margin: 10px 0; }
+        .news-detail-content p { line-height: 1.8; margin-bottom: 10px; }
+        .news-detail-content h3 { color: #e94560; margin: 15px 0 8px; }
+
+        body.light-theme { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 50%, #e8eef5 100%); color: #333; }
+        body.light-theme header { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+        body.light-theme .tab-btn { background: rgba(0,0,0,0.1); color: #333; }
+        body.light-theme .tab-btn.active { background: linear-gradient(90deg, #2563eb, #3b82f6); color: #fff; }
+        body.light-theme .search-box, body.light-theme .filter-select { background: rgba(255,255,255,0.8); color: #333; border-color: rgba(0,0,0,0.2); }
+        body.light-theme .search-box::placeholder { color: rgba(0,0,0,0.5); }
+        body.light-theme .filter-select option { background: #fff; color: #333; }
+        body.light-theme .card, body.light-theme .news-card, body.light-theme .episode-card { background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.1); }
+        body.light-theme .card-title { color: #2563eb; }
+        body.light-theme .news-title, body.light-theme .episode-title { color: #0ea5e9; }
+        body.light-theme .modal { background: linear-gradient(135deg, #fff 0%, #f8fafc 100%); border-color: rgba(0,0,0,0.1); }
+        body.light-theme .modal-title { color: #2563eb; }
+        body.light-theme .form-group input { background: rgba(0,0,0,0.05); color: #333; border-color: rgba(0,0,0,0.2); }
+        body.light-theme .form-btn { background: linear-gradient(90deg, #2563eb, #3b82f6); }
+        body.light-theme .empty-state { opacity: 0.7; }
+
+        .compare-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .compare-chip { padding: 6px 12px; background: rgba(233, 69, 96, 0.2); color: #e94560; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }
+        .compare-chip .remove-btn { cursor: pointer; font-size: 1rem; }
+        .compare-add-btn { padding: 6px 12px; background: rgba(0,210,255,0.2); color: #00d2ff; border-radius: 20px; font-size: 0.85rem; cursor: pointer; border: none; }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.4rem; }
+            .news-card, .episode-card { flex-direction: column; }
+            .news-img, .episode-img { width: 100%; height: 150px; }
+            .grid { grid-template-columns: 1fr; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .modal-img { height: 160px; }
+            .tabs { gap: 6px; }
+            .tab-btn { padding: 7px 14px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="sunlight"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+    </div>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-icon"></div>
+        <div class="loading-text">航海中...</div>
+        <div class="loading-subtext">正在探索伟大航路...</div>
+    </div>
+    
+    <header>
+        <h1 onclick="switchTab('characters')">⚓ ONE PIECE</h1>
+        <div class="user-area" id="user-area">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+            <button class="login-btn" onclick="showAuthModal('login')">🔐 登录</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('characters')">👥 角色列表</button>
+            <button class="tab-btn" onclick="switchTab('ranking')">💰 悬赏排行</button>
+            <button class="tab-btn" onclick="switchTab('birthday')">🎂 生日日历</button>
+            <button class="tab-btn" onclick="switchTab('compare')">⚖️ 角色对比</button>
+            <button class="tab-btn" onclick="switchTab('devil-fruits')">🍎 恶魔果实</button>
+            <button class="tab-btn" onclick="switchTab('anime')">📺 动画</button>
+            <button class="tab-btn" onclick="switchTab('manga')">📖 漫画</button>
+            <button class="tab-btn" onclick="switchTab('events')">🎬 事件</button>
+            <button class="tab-btn" onclick="switchTab('news')">📰 最新资讯</button>
+            <button class="tab-btn" onclick="switchTab('favorites')">❤️ 我的收藏</button>
+            <button class="tab-btn" onclick="switchTab('statistics')">📊 数据统计</button>
+            <button class="tab-btn" onclick="switchTab('relations')">🔗 角色关系</button>
+            <button class="tab-btn" onclick="switchTab('agent')">🤖 智能助手</button>
+            
+        </div>
+
+        <div class="toolbar" id="characters-toolbar">
+            <input type="text" class="search-box" id="characters-search" placeholder="搜索角色名、所属、果实..." oninput="debounceSearch()">
+            <select class="filter-select" id="organization-filter" onchange="fetchCharacters()"><option value="">全部组织</option></select>
+            <button class="sort-btn" onclick="setSort('name', 'asc')" id="sort-name">📝 姓名</button>
+            <button class="sort-btn" onclick="setSort('bounty', 'desc')" id="sort-bounty">💰 悬赏金</button>
+            <button class="sort-btn" onclick="setSort('birthday', 'asc')" id="sort-birthday">🎂 生日</button>
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新全部</button>
+            <button class="refresh-btn" style="background: linear-gradient(90deg, #28a745, #20c997);" onclick="refreshData(true)">⚡ 快速刷新角色</button>
+            <button class="export-btn" onclick="exportCharacters()">📥 导出CSV</button>
+        </div>
+
+        <div class="toolbar" id="devil-fruits-toolbar" style="display: none;">
+            <input type="text" class="search-box" id="fruits-search" placeholder="搜索果实名、能力、能力者..." oninput="debounceFruitsSearch()">
+            <select class="filter-select" id="fruit-type-filter" onchange="fetchDevilFruits()"><option value="">全部类型</option></select>
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+            <button class="export-btn" onclick="exportDevilFruits()">📥 导出CSV</button>
+        </div>
+
+        <div class="toolbar" id="anime-toolbar" style="display: none;">
+            <input type="text" class="search-box" id="anime-search" placeholder="搜索集数、标题..." oninput="debounceAnimeSearch()">
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+        </div>
+
+        <div class="toolbar" id="manga-toolbar" style="display: none;">
+            <input type="text" class="search-box" id="manga-search" placeholder="搜索话数、标题..." oninput="debounceMangaSearch()">
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+        </div>
+
+        <div class="toolbar" id="events-toolbar" style="display: none;">
+            <input type="text" class="search-box" id="events-search" placeholder="搜索事件名称..." oninput="debounceEventsSearch()">
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+        </div>
+
+        <div class="toolbar" id="news-toolbar" style="display: none;">
+            <input type="text" class="search-box" id="news-search" placeholder="搜索新闻标题、分类..." oninput="debounceNewsSearch()">
+            <select class="filter-select" id="news-category" onchange="fetchNews()"><option value="">全部分类</option></select>
+            <button class="refresh-btn" onclick="refreshData()">🔄 刷新数据</button>
+        </div>
+
+        <div class="toolbar" id="favorites-toolbar" style="display: none;">
+            <select class="filter-select" id="favorites-type" onchange="fetchFavorites()"><option value="">全部类型</option><option value="character">角色</option><option value="devil_fruit">恶魔果实</option></select>
+        </div>
+
+        <div class="toolbar" id="ranking-toolbar" style="display: none;">
+            <select class="filter-select" id="ranking-filter" onchange="renderRanking()"><option value="">全部组织</option></select>
+        </div>
+
+        <div class="toolbar" id="birthday-toolbar" style="display: none;">
+            <select class="filter-select" id="birthday-month" onchange="renderBirthdayCalendar()"><option value="">全部月份</option><option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option><option value="5">5月</option><option value="6">6月</option><option value="7">7月</option><option value="8">8月</option><option value="9">9月</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option></select>
+        </div>
+
+        <div class="toolbar" id="compare-toolbar" style="display: none;">
+            <button class="export-btn" onclick="showCompareModal()">➕ 添加角色对比</button>
+        </div>
+
+        <div id="characters-view">
+            <div class="grid" id="characters-grid"></div>
+            <div class="pagination" id="characters-pagination"></div>
+        </div>
+
+        <div id="devil-fruits-view" style="display: none;">
+            <div class="grid" id="devil-fruits-grid"></div>
+            <div class="pagination" id="devil-fruits-pagination"></div>
+        </div>
+
+        <div id="anime-view" style="display: none;">
+            <div id="anime-list"></div>
+            <div class="pagination" id="anime-pagination"></div>
+        </div>
+
+        <div id="manga-view" style="display: none;">
+            <div id="manga-list"></div>
+            <div class="pagination" id="manga-pagination"></div>
+        </div>
+
+        <div id="events-view" style="display: none;">
+            <div class="grid" id="events-grid"></div>
+            <div class="pagination" id="events-pagination"></div>
+        </div>
+
+        <div id="news-view" style="display: none;">
+            <div id="news-list"></div>
+            <div class="pagination" id="news-pagination"></div>
+        </div>
+
+        <div id="favorites-view" style="display: none;">
+            <div class="grid" id="favorites-grid"></div>
+        </div>
+
+        <div id="ranking-view" style="display: none;">
+            <div class="ranking-list" id="ranking-list"></div>
+        </div>
+
+        <div id="birthday-view" style="display: none;">
+            <div class="calendar-grid" id="birthday-calendar"></div>
+            <div id="birthday-characters" style="margin-top: 20px;"></div>
+        </div>
+
+        <div id="compare-view" style="display: none;">
+            <div class="compare-selector" id="compare-selector"></div>
+            <div id="compare-result"></div>
+        </div>
+
+        <div id="statistics-view" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="stat-characters">0</div>
+                    <div class="stat-label">角色总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" id="stat-total-bounty">0</div>
+                    <div class="stat-label">总悬赏金</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🍎</div>
+                    <div class="stat-value" id="stat-devil-fruits">0</div>
+                    <div class="stat-label">恶魔果实</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📰</div>
+                    <div class="stat-value" id="stat-news">0</div>
+                    <div class="stat-label">新闻数量</div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3>💰 悬赏金分布</h3>
+                <div class="chart-container">
+                    <canvas id="bounty-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3>🏠 组织分布</h3>
+                <div class="chart-container">
+                    <canvas id="organization-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3>🎂 生日月份分布</h3>
+                <div class="chart-container">
+                    <canvas id="birthday-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h3>🍎 恶魔果实类型分布</h3>
+                <div class="chart-container">
+                    <canvas id="fruit-type-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="relations-view" style="display: none;">
+            <div class="relation-controls">
+                <select id="relation-character" onchange="renderRelationGraph()">
+                    <option value="">选择一个角色查看关系</option>
+                </select>
+                <select id="relation-type" onchange="renderRelationGraph()">
+                    <option value="all">所有关系</option>
+                    <option value="same-org">同组织</option>
+                    <option value="family">血缘关系</option>
+                    <option value="rival">对手关系</option>
+                </select>
+            </div>
+            <div class="relation-graph-container">
+                <svg id="relation-graph" width="100%" height="500"></svg>
+            </div>
+            <div class="relation-list" id="relation-list"></div>
+        </div>
+
+        <!-- Agent 智能助手 -->
+        <div id="agent-view" style="display: none;">
+            <div class="agent-container">
+                <div class="agent-header">
+                    <h2>🤖 海贼王数据智能助手</h2>
+                    <p>用自然语言查询数据，例如："路飞的悬赏金是多少"、"悬赏金超过10亿的角色有哪些"</p>
+                </div>
+
+                <div class="agent-main">
+                    <div class="agent-chat-area">
+                        <div class="agent-chat" id="agent-chat">
+                            <div class="agent-message agent-welcome">
+                                <div class="agent-avatar">🤖</div>
+                                <div class="agent-content">
+                                    <p>你好！我是海贼王数据智能助手。你可以用自然语言问我任何关于海贼王角色、恶魔果实的问题。</p>
+
+                                    <div style="margin-top: 15px;">
+                                        <div style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 8px;">📊 角色信息查询</div>
+                                        <div class="agent-suggestions">
+                                            <button onclick="askAgent('路飞的悬赏金是多少')">路飞的悬赏金？</button>
+                                            <button onclick="askAgent('索隆的生日')">索隆的生日？</button>
+                                            <button onclick="askAgent('山治的恶魔果实')">山治的果实？</button>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 12px;">
+                                        <div style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 8px;">💰 悬赏金查询</div>
+                                        <div class="agent-suggestions">
+                                            <button onclick="askAgent('悬赏金超过10亿的角色有哪些')">悬赏金超10亿</button>
+                                            <button onclick="askAgent('悬赏金在1亿到5亿之间的角色')">悬赏金区间</button>
+                                            <button onclick="askAgent('悬赏金最高的前10名角色')">悬赏金TOP10</button>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 12px;">
+                                        <div style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 8px;">🏴 组织查询</div>
+                                        <div class="agent-suggestions">
+                                            <button onclick="askAgent('草帽海贼团有哪些成员')">草帽海贼团</button>
+                                            <button onclick="askAgent('海军里有哪些人')">海军成员</button>
+                                            <button onclick="askAgent('哪个组织的角色最多')">组织统计</button>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 12px;">
+                                        <div style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 8px;">🍎 恶魔果实查询</div>
+                                        <div class="agent-suggestions">
+                                            <button onclick="askAgent('超人系果实有哪些')">超人系果实</button>
+                                            <button onclick="askAgent('自然系恶魔果实')">自然系果实</button>
+                                            <button onclick="askAgent('橡胶果实是谁吃的')">果实能力者</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="agent-input-area">
+                            <input type="text" id="agent-input" placeholder="输入您的问题，例如：路飞的悬赏金是多少？" onkeypress="if(event.key==='Enter')sendAgentMessage()">
+                            <button onclick="sendAgentMessage()">发送 ➤</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-sidebar">
+                        <div class="history-panel">
+                            <div class="panel-header">
+                                <h3>📜 查询历史</h3>
+                                <button class="clear-history-btn" onclick="clearQueryHistory()">清空</button>
+                            </div>
+                            <div class="history-list" id="query-history">
+                                <div class="no-history">暂无查询历史</div>
+                            </div>
+                        </div>
+
+                        <div class="shortcuts-panel">
+                            <div class="panel-header">
+                                <h3>⚡ 快捷查询</h3>
+                            </div>
+                            <div class="shortcuts-grid">
+                                <button class="shortcut-btn" onclick="askAgent('悬赏金最高的前10名角色')">💰 悬赏金TOP10</button>
+                                <button class="shortcut-btn" onclick="askAgent('草帽海贼团有哪些成员')">🏴 草帽海贼团</button>
+                                <button class="shortcut-btn" onclick="askAgent('自然系果实有哪些')">🌟 自然系果实</button>
+                                <button class="shortcut-btn" onclick="askAgent('悬赏金在10亿到20亿之间的角色')">💵 悬赏金区间</button>
+                                <button class="shortcut-btn" onclick="askAgent('哪些角色没有恶魔果实')">🚫 无果实角色</button>
+                                <button class="shortcut-btn" onclick="askAgent('多弗朗明哥的信息')">👑 多弗朗明哥</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">详情</h2>
+                <button class="share-btn" onclick="toggleShareMenu()">📤</button>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="share-menu" id="share-menu">
+                <div class="share-option" onclick="shareToWechat()">💬 微信分享</div>
+                <div class="share-option" onclick="shareToWeibo()">📢 微博分享</div>
+                <div class="share-option" onclick="shareToQQ()">🐧 QQ分享</div>
+                <div class="share-option" onclick="copyShareLink()">🔗 复制链接</div>
+                <div class="share-option" onclick="shareAsImage()">🖼️ 生成图片</div>
+            </div>
+            <div class="modal-content" id="modal-content"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="auth-modal" onclick="closeAuthModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="auth-title">登录</h2>
+                <button class="modal-close" onclick="closeAuthModal()">×</button>
+            </div>
+            <div class="modal-content" id="auth-content">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="auth-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="auth-password" placeholder="请输入密码">
+                </div>
+                <div class="form-group" id="auth-email-group" style="display: none;">
+                    <label>邮箱（可选）</label>
+                    <input type="email" id="auth-email" placeholder="请输入邮箱">
+                </div>
+                <button class="form-btn" id="auth-submit" onclick="submitAuth()">登录</button>
+                <div class="form-switch" id="auth-switch">
+                    还没有账号？<a onclick="switchAuthMode('register')">立即注册</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="news-detail-modal" onclick="closeNewsDetailModal()">
+        <div class="modal" onclick="event.stopPropagation()" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="news-detail-title">新闻详情</h2>
+                <button class="modal-close" onclick="closeNewsDetailModal()">×</button>
+            </div>
+            <div class="modal-content news-detail-content" id="news-detail-content"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="compare-modal" onclick="closeCompareModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">选择角色对比</h2>
+                <button class="modal-close" onclick="closeCompareModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="form-group">
+                    <input type="text" id="compare-search" placeholder="搜索角色..." oninput="debounceCompareSearch()">
+                </div>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <div id="compare-character-list"></div>
+                </div>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="form-btn" onclick="startCompare()" style="width: auto; padding: 10px 30px;">开始对比</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'characters';
+        let data = { characters: [], news: [], devilFruits: [], animeEpisodes: [], mangaChapters: [], events: [], favorites: [] };
+        let currentPage = { characters: 1, news: 1, devilFruits: 1, anime: 1, manga: 1, events: 1 };
+        let currentSort = { field: 'name', order: 'asc' };
+        let searchTimeout;
+        let currentUser = null;
+        let authMode = 'login';
+        let currentResultView = 'table'; // 查询结果展示模式：table 或 cards
+        let currentQueryResult = null; // 保存当前查询结果数据
+
+        function getToken() { return localStorage.getItem('onepiece_token'); }
+        function setToken(token) { localStorage.setItem('onepiece_token', token); }
+        function removeToken() { localStorage.removeItem('onepiece_token'); }
+
+        function initLazyLoad() {
+            const lazyImages = document.querySelectorAll('img.lazy:not([src])');
+            if ('loading' in HTMLImageElement.prototype) {
+                lazyImages.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                    }
+                });
+            } else {
+                let lazyImageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            const src = img.getAttribute('data-src');
+                            if (src) {
+                                img.src = src;
+                            }
+                            observer.unobserve(img);
+                        }
+                    });
+                }, {
+                    rootMargin: '100px 0px',
+                    threshold: 0.01
+                });
+
+                lazyImages.forEach(img => {
+                    lazyImageObserver.observe(img);
+                });
+            }
+        }
+
+        function lazyLoadImages() {
+            setTimeout(() => {
+                const lazyImages = document.querySelectorAll('img.lazy');
+                lazyImages.forEach(img => {
+                    const src = img.getAttribute('data-src');
+                    if (src && !img.src) {
+                        img.src = src;
+                    }
+                });
+            }, 100);
+        }
+
+        async function fetchData() {
+            await Promise.all([
+                fetchCharacters(),
+                fetchNewsCategories(),
+                fetchNews(),
+                fetchDevilFruits(),
+                fetchFruitTypes(),
+                fetchAnime(),
+                fetchManga(),
+                fetchEvents(),
+                fetchOrganizations(),
+                loadUser()
+            ]);
+        }
+
+        async function loadUser() {
+            const token = getToken();
+            if (token) {
+                try {
+                    const response = await fetch('/api/user/me', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        currentUser = result.data;
+                        updateUserArea();
+                        fetchFavorites();
+                    } else {
+                        removeToken();
+                    }
+                } catch (error) {
+                    removeToken();
+                }
+            }
+        }
+
+        function updateUserArea() {
+            const area = document.getElementById('user-area');
+            if (currentUser) {
+                area.innerHTML = `
+                    <div class="user-info">
+                        <div class="user-avatar">${currentUser.username.charAt(0).toUpperCase()}</div>
+                        <span>${currentUser.username}</span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                `;
+            } else {
+                area.innerHTML = '<button class="login-btn" onclick="showAuthModal(\'login\')">🔐 登录</button>';
+            }
+        }
+
+        async function logout() {
+            removeToken();
+            currentUser = null;
+            updateUserArea();
+            data.favorites = [];
+            renderFavorites();
+        }
+
+        function showAuthModal(mode) {
+            authMode = mode;
+            document.getElementById('auth-title').textContent = mode === 'login' ? '登录' : '注册';
+            document.getElementById('auth-submit').textContent = mode === 'login' ? '登录' : '注册';
+            document.getElementById('auth-email-group').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('auth-switch').innerHTML = mode === 'login' 
+                ? '还没有账号？<a onclick="switchAuthMode(\'register\')">立即注册</a>'
+                : '已有账号？<a onclick="switchAuthMode(\'login\')">立即登录</a>';
+            
+            document.getElementById('auth-username').value = '';
+            document.getElementById('auth-password').value = '';
+            document.getElementById('auth-email').value = '';
+            document.getElementById('auth-modal').classList.add('show');
+        }
+
+        function switchAuthMode(mode) {
+            showAuthModal(mode);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.remove('show');
+        }
+
+        async function submitAuth() {
+            const username = document.getElementById('auth-username').value;
+            const password = document.getElementById('auth-password').value;
+            const email = document.getElementById('auth-email').value;
+
+            if (!username || !password) {
+                alert('用户名和密码不能为空');
+                return;
+            }
+
+            const url = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+            const body = authMode === 'login' ? { username, password } : { username, password, email };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    setToken(result.data.token);
+                    currentUser = result.data.user;
+                    updateUserArea();
+                    closeAuthModal();
+                    fetchFavorites();
+                    alert(authMode === 'login' ? '登录成功！' : '注册成功！');
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                alert('请求失败，请稍后重试');
+            }
+        }
+
+        async function fetchCharacters(page = 1) {
+            currentPage.characters = page;
+            const search = document.getElementById('characters-search').value;
+            const organization = document.getElementById('organization-filter').value;
+            const sortBy = currentSort.field;
+            const sortOrder = currentSort.order;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 20, search, organization, sortBy, sortOrder });
+                const response = await fetch(`/api/characters?${params}&_t=${Date.now()}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.characters = result.data;
+                    renderCharacters(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching characters:', error); }
+        }
+
+        async function fetchNews(page = 1) {
+            currentPage.news = page;
+            const search = document.getElementById('news-search').value;
+            const category = document.getElementById('news-category').value;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 8, search, category });
+                const response = await fetch(`/api/news?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.news = result.data;
+                    renderNews(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching news:', error); }
+        }
+
+        async function fetchNewsCategories() {
+            try {
+                const response = await fetch('/api/news/categories');
+                const result = await response.json();
+                if (result.success) {
+                    const select = document.getElementById('news-category');
+                    result.data.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) { console.error('Error fetching categories:', error); }
+        }
+
+        async function fetchOrganizations() {
+            try {
+                const response = await fetch('/api/organizations');
+                const result = await response.json();
+                if (result.success) {
+                    ['organization-filter', 'ranking-filter'].forEach(id => {
+                        const select = document.getElementById(id);
+                        if (select) {
+                            result.data.forEach(org => {
+                                const option = document.createElement('option');
+                                option.value = org;
+                                option.textContent = org;
+                                select.appendChild(option);
+                            });
+                        }
+                    });
+                }
+            } catch (error) { console.error('Error fetching organizations:', error); }
+        }
+
+        async function fetchDevilFruits(page = 1) {
+            currentPage.devilFruits = page;
+            const search = document.getElementById('fruits-search').value;
+            const type = document.getElementById('fruit-type-filter').value;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 12, search, type });
+                const response = await fetch(`/api/devil-fruits?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.devilFruits = result.data;
+                    renderDevilFruits(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching devil fruits:', error); }
+        }
+
+        async function fetchFruitTypes() {
+            try {
+                const response = await fetch('/api/devil-fruit/types');
+                const result = await response.json();
+                if (result.success) {
+                    const select = document.getElementById('fruit-type-filter');
+                    result.data.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) { console.error('Error fetching fruit types:', error); }
+        }
+
+        async function fetchAnime(page = 1) {
+            currentPage.anime = page;
+            const search = document.getElementById('anime-search').value;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 8, search });
+                const response = await fetch(`/api/anime?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.animeEpisodes = result.data;
+                    renderAnime(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching anime:', error); }
+        }
+
+        async function fetchManga(page = 1) {
+            currentPage.manga = page;
+            const search = document.getElementById('manga-search').value;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 8, search });
+                const response = await fetch(`/api/manga?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.mangaChapters = result.data;
+                    renderManga(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching manga:', error); }
+        }
+
+        async function fetchEvents(page = 1) {
+            currentPage.events = page;
+            const search = document.getElementById('events-search').value;
+
+            try {
+                const params = new URLSearchParams({ page, limit: 12, search });
+                const response = await fetch(`/api/events?${params}`);
+                const result = await response.json();
+                if (result.success) {
+                    data.events = result.data;
+                    renderEvents(result.pagination);
+                }
+            } catch (error) { console.error('Error fetching events:', error); }
+        }
+
+        async function fetchFavorites() {
+            if (!currentUser) {
+                data.favorites = [];
+                renderFavorites();
+                return;
+            }
+
+            const type = document.getElementById('favorites-type').value;
+            try {
+                const params = type ? `?type=${type}` : '';
+                const response = await fetch(`/api/favorites${params}`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    data.favorites = result.data;
+                    renderFavorites();
+                }
+            } catch (error) { console.error('Error fetching favorites:', error); }
+        }
+
+        async function toggleFavorite(type, itemId, itemName, itemImage) {
+            if (!currentUser) {
+                showAuthModal('login');
+                return;
+            }
+
+            try {
+                const checkResponse = await fetch(`/api/favorites/check/${type}/${itemId}`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const checkResult = await checkResponse.json();
+
+                if (checkResult.success && checkResult.data) {
+                    await fetch(`/api/favorites/${type}/${itemId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                } else {
+                    await fetch('/api/favorites', {
+                        method: 'POST',
+                        headers: { 
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ type, itemId, itemName, itemImage })
+                    });
+                }
+                
+                fetchFavorites();
+                refreshCurrentTab();
+            } catch (error) { console.error('Error toggling favorite:', error); }
+        }
+
+        function refreshCurrentTab() {
+            if (currentTab === 'characters') fetchCharacters(currentPage.characters);
+            else if (currentTab === 'devil-fruits') fetchDevilFruits(currentPage.devilFruits);
+        }
+
+        function isItemFavorited(type, itemId) {
+            return data.favorites.some(f => f.type === type && f.item_id === itemId);
+        }
+
+        function renderCharacters(pagination) {
+            const grid = document.getElementById('characters-grid');
+            if (data.characters.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h3>暂无角色数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('characters-pagination').innerHTML = '';
+                return;
+            }
+            grid.innerHTML = data.characters.map((c, index) => `
+                <div class="card-container">
+                    <div class="card" onclick="this.classList.toggle('flipped')">
+                        <div class="card-face card-front">
+                            <button class="favorite-btn ${isItemFavorited('character', c.name) ? 'favorited' : ''}" onclick="event.stopPropagation(); toggleFavorite('character', '${c.name}', '${c.name}', '${c.localImage || ''}')">
+                                ❤️
+                            </button>
+                            <div class="card-header">
+                                <div class="card-wanted">WANTED</div>
+                                <div class="card-id">ID: ${String(index + 1).padStart(3, '0')}</div>
+                            </div>
+                            <div class="card-photo-frame">
+                                <div class="card-avatar">${c.name}</div>
+                                ${c.localImage ? 
+                                    `<img src="${c.localImage}" alt="${c.name}" class="card-img" onload="this.classList.add('loaded'); this.style.background='none'" onerror="this.style.display='none'; this.classList.add('loaded')">` : 
+                                    `<div class="card-placeholder"><span>${c.name.charAt(0)}</span></div>`
+                                }
+                                <div class="card-photo-label">PHOTO</div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">${c.name}</h3>
+                                <div class="card-bounty">${c.bounty || '-'}</div>
+                                ${c.organization ? `<p class="card-info"><strong>所属:</strong> ${c.organization}</p>` : ''}
+                                ${c.birthday ? `<p class="card-info"><strong>生日:</strong> ${c.birthday}</p>` : ''}
+                            </div>
+                            <div class="card-seal"></div>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="card-back-header">
+                                <div class="card-back-title">${c.name}</div>
+                            </div>
+                            <div class="card-back-info">
+                                <p><span class="label">悬赏金</span>${c.bounty || '-'}</p>
+                                <p><span class="label">所属</span>${c.organization || '-'}</p>
+                                <p><span class="label">生日</span>${c.birthday || '-'}</p>
+                                <p><span class="label">果实</span>${c.devilFruit || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('characters-pagination', pagination, fetchCharacters);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderNews(pagination) {
+            const list = document.getElementById('news-list');
+            if (data.news.length === 0) {
+                list.innerHTML = `<div class="empty-state"><h3>暂无新闻数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('news-pagination').innerHTML = '';
+                return;
+            }
+            list.innerHTML = data.news.map(n => `
+                <div class="news-card" onclick="window.open('${n.link}', '_blank')">
+                    ${n.image ? `<img data-src="${n.image}" alt="${n.title}" class="news-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">` : ''}
+                    <div class="news-content">
+                        <h3 class="news-title">${n.title}</h3>
+                        <div class="news-meta">
+                            <span class="category">${n.category}</span>
+                            <span class="date">📅 ${n.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('news-pagination', pagination, fetchNews);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderDevilFruits(pagination) {
+            const grid = document.getElementById('devil-fruits-grid');
+            if (data.devilFruits.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h3>暂无恶魔果实数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('devil-fruits-pagination').innerHTML = '';
+                return;
+            }
+            grid.innerHTML = data.devilFruits.map((f, index) => `
+                <div class="card-container">
+                    <div class="card" onclick="this.classList.toggle('flipped')">
+                        <div class="card-face card-front">
+                            <button class="favorite-btn ${isItemFavorited('devil_fruit', f.name) ? 'favorited' : ''}" onclick="event.stopPropagation(); toggleFavorite('devil_fruit', '${f.name}', '${f.name}', '${f.fruitImage || f.image || ''}')">
+                                ❤️
+                            </button>
+                            <div class="card-header">
+                                <div class="card-wanted">DEVIL FRUIT</div>
+                                <div class="card-id">ID: ${String(index + 1).padStart(3, '0')}</div>
+                            </div>
+                            <div class="card-photo-frame fruit-frame">
+                                ${f.fruitImage ? 
+                                    `<img src="${f.fruitImage}" alt="${f.name}" class="fruit-image" onload="this.classList.add('loaded')" onerror="this.style.display='none'">` :
+                                    `<div class="fruit-icon ${f.type === '超人系' ? 'paramecia' : f.type === '動物系' ? 'zoan' : f.type === '自然系' ? 'logia' : 'special'}">
+                                        <div class="fruit-body">
+                                            <div class="fruit-pattern"></div>
+                                        </div>
+                                        <div class="fruit-stem"></div>
+                                    </div>`
+                                }
+                                <div class="card-photo-label">FRUIT</div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">${f.name}</h3>
+                                ${f.type ? `<p class="card-info"><strong>类型:</strong> ${f.type}</p>` : ''}
+                                ${f.users && f.users.length ? `<p class="card-info"><strong>能力者:</strong> ${f.users.join(', ')}</p>` : ''}
+                            </div>
+                            <div class="card-seal"></div>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="card-back-header">
+                                <div class="card-back-title">${f.name}</div>
+                            </div>
+                            <div class="card-back-info">
+                                <p><span class="label">类型</span>${f.type || '-'}</p>
+                                <p><span class="label">能力者</span>${f.users && f.users.length ? f.users.join(', ') : '-'}</p>
+                                <p><span class="label">能力</span>${f.ability || '-'}</p>
+                                <p><span class="label">描述</span>${f.description || '-'}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('devil-fruits-pagination', pagination, fetchDevilFruits);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderAnime(pagination) {
+            const list = document.getElementById('anime-list');
+            if (data.animeEpisodes.length === 0) {
+                list.innerHTML = `<div class="empty-state"><h3>暂无动画数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('anime-pagination').innerHTML = '';
+                return;
+            }
+            list.innerHTML = data.animeEpisodes.map(e => `
+                <div class="episode-card" onclick="window.open('${e.link}', '_blank')">
+                    ${e.image ? `<img data-src="${e.localImage || e.image}" alt="${e.title}" class="episode-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">` : ''}
+                    <div class="episode-content">
+                        <h3 class="episode-title">第${e.episodeNumber}話 ${e.title}</h3>
+                        <div class="episode-meta">
+                            <span class="date">📅 ${e.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('anime-pagination', pagination, fetchAnime);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderManga(pagination) {
+            const list = document.getElementById('manga-list');
+            if (data.mangaChapters.length === 0) {
+                list.innerHTML = `<div class="empty-state"><h3>暂无漫画数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('manga-pagination').innerHTML = '';
+                return;
+            }
+            list.innerHTML = data.mangaChapters.map(c => `
+                <div class="episode-card" onclick="window.open('${c.link}', '_blank')">
+                    ${c.image ? `<img data-src="${c.localImage || c.image}" alt="${c.title}" class="episode-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">` : ''}
+                    <div class="episode-content">
+                        <h3 class="episode-title">第${c.chapterNumber}話 ${c.title}</h3>
+                        <div class="episode-meta">
+                            <span class="date">📅 ${c.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('manga-pagination', pagination, fetchManga);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderEvents(pagination) {
+            const grid = document.getElementById('events-grid');
+            if (data.events.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h3>暂无事件数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('events-pagination').innerHTML = '';
+                return;
+            }
+            grid.innerHTML = data.events.map(e => `
+                <div class="card" onclick="window.open('${e.link}', '_blank')">
+                    <img data-src="${e.localImage || e.image || ''}" alt="${e.title}" class="card-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.src='https://via.placeholder.com/250x170?text=No+Image'; this.classList.add('loaded'); this.classList.remove('lazy')">
+                    <div class="card-content">
+                        <h3 class="card-title">${e.title}</h3>
+                        ${e.date ? `<p class="card-info"><strong>日期:</strong> ${e.date}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('events-pagination', pagination, fetchEvents);
+            setTimeout(lazyLoadImages, 100);
+        }
+
+        function renderFavorites() {
+            const grid = document.getElementById('favorites-grid');
+            if (!currentUser) {
+                grid.innerHTML = `<div class="empty-state"><h3>请先登录</h3><p>登录后可以收藏喜欢的角色和恶魔果实</p></div>`;
+                return;
+            }
+            if (data.favorites.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><h3>暂无收藏</h3><p>点击角色或果实卡片上的❤️按钮添加收藏</p></div>`;
+                return;
+            }
+            grid.innerHTML = data.favorites.map((f, index) => `
+                <div class="card-container">
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <button class="favorite-btn favorited" onclick="toggleFavorite('${f.type}', '${f.item_id}', '${f.item_name}', '${f.item_image || ''}')">
+                                ❤️
+                            </button>
+                            <div class="card-header">
+                                <div class="card-wanted">${f.type === 'character' ? 'WANTED' : 'DEVIL FRUIT'}</div>
+                                <div class="card-id">ID: ${String(index + 1).padStart(3, '0')}</div>
+                            </div>
+                            <div class="card-photo-frame">
+                                ${f.item_image ? 
+                                    `<img src="${f.item_image}" alt="${f.item_name}" class="card-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                     <div class="card-placeholder" style="display:none"><span>${f.item_name.charAt(0)}</span></div>` :
+                                    `<div class="card-placeholder"><span>${f.item_name.charAt(0)}</span></div>`
+                                }
+                                <div class="card-photo-label">${f.type === 'character' ? 'PHOTO' : 'FRUIT'}</div>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">${f.item_name}</h3>
+                                <p class="card-info"><strong>类型:</strong> ${f.type === 'character' ? '角色' : '恶魔果实'}</p>
+                            </div>
+                            <div class="card-seal"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPagination(containerId, pagination, fetchFn) {
+            const container = document.getElementById(containerId);
+            if (pagination.pages <= 1) { container.innerHTML = ''; return; }
+
+            let html = `<button class="page-btn" onclick="${fetchFn.name}(${pagination.page - 1})" ${pagination.page <= 1 ? 'disabled' : ''}>←</button><span class="pagination-info">${pagination.page}/${pagination.pages}</span>`;
+            const maxVisible = 5;
+            let start = Math.max(1, pagination.page - Math.floor(maxVisible / 2));
+            let end = Math.min(pagination.pages, start + maxVisible - 1);
+            if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+
+            for (let i = start; i <= end; i++) {
+                html += `<button class="page-btn ${i === pagination.page ? 'active' : ''}" onclick="${fetchFn.name}(${i})">${i}</button>`;
+            }
+            html += `<button class="page-btn" onclick="${fetchFn.name}(${pagination.page + 1})" ${pagination.page >= pagination.pages ? 'disabled' : ''}>→</button>`;
+            container.innerHTML = html;
+        }
+
+        function setSort(field, order) {
+            currentSort = { field, order };
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`sort-${field}`).classList.add('active');
+            fetchCharacters(1);
+        }
+
+        function debounceSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchCharacters(1), 300); }
+        function debounceNewsSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchNews(1), 300); }
+        function debounceFruitsSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchDevilFruits(1), 300); }
+        function debounceAnimeSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchAnime(1), 300); }
+        function debounceMangaSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchManga(1), 300); }
+        function debounceEventsSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => fetchEvents(1), 300); }
+
+        async function showCharacterDetail(name) {
+            try {
+                const response = await fetch(`/api/character/${name}`);
+                const result = await response.json();
+                if (result.success) {
+                    const c = result.data;
+                    setShareData(c);
+                    document.getElementById('modal-title').textContent = c.name;
+                    document.getElementById('modal-content').innerHTML = `
+                        <img data-src="${c.localImage || c.image || ''}" alt="${c.name}" class="modal-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">
+                        <div class="stats-bar">
+                            <div class="stat-item"><div class="stat-value">${c.bounty || '-'}</div><div class="stat-label">悬赏金</div></div>
+                            <div class="stat-item"><div class="stat-value">${c.age || '-'}</div><div class="stat-label">年龄</div></div>
+                            <div class="stat-item"><div class="stat-value">${c.height || '-'}</div><div class="stat-label">身高</div></div>
+                        </div>
+                        <div class="detail-grid">
+                            <div class="detail-item"><div class="detail-label">所属</div><div class="detail-value">${c.organization || '-'}</div></div>
+                            <div class="detail-item"><div class="detail-label">职位</div><div class="detail-value">${c.occupation || '-'}</div></div>
+                            <div class="detail-item"><div class="detail-label">生日</div><div class="detail-value">${c.birthday || '-'}</div></div>
+                            <div class="detail-item"><div class="detail-label">血型</div><div class="detail-value">${c.bloodType || '-'}</div></div>
+                            <div class="detail-item"><div class="detail-label">出身地</div><div class="detail-value">${c.hometown || '-'}</div></div>
+                            <div class="detail-item"><div class="detail-label">恶魔果实</div><div class="detail-value">${c.devilFruit || '-'}</div></div>
+                        </div>
+                        ${c.description ? `<div class="detail-description"><strong>角色简介</strong>${c.description}</div>` : ''}
+                        ${c.link ? `<div style="text-align: center; margin-top: 20px;"><a href="${c.link}" target="_blank" style="color: #00d2ff; text-decoration: none;">🔗 查看官网详情</a></div>` : ''}
+                    `;
+                    document.getElementById('modal-overlay').classList.add('show');
+                }
+            } catch (error) { console.error('Error fetching character detail:', error); }
+        }
+
+        async function showFruitDetail(name) {
+            const fruit = data.devilFruits.find(f => f.name === name);
+            if (!fruit) return;
+            
+            document.getElementById('modal-title').textContent = fruit.name;
+            document.getElementById('modal-content').innerHTML = `
+                <img data-src="${fruit.localImage || fruit.image || ''}" alt="${fruit.name}" class="modal-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">
+                <div class="detail-grid">
+                    <div class="detail-item"><div class="detail-label">类型</div><div class="detail-value">${fruit.type || '-'}</div></div>
+                    <div class="detail-item"><div class="detail-label">能力者</div><div class="detail-value">${fruit.user || '-'}</div></div>
+                    <div class="detail-item"><div class="detail-label">能力</div><div class="detail-value">${fruit.ability || '-'}</div></div>
+                </div>
+                ${fruit.description ? `<div class="detail-description"><strong>果实简介</strong>${fruit.description}</div>` : ''}
+                ${fruit.link ? `<div style="text-align: center; margin-top: 20px;"><a href="${fruit.link}" target="_blank" style="color: #00d2ff; text-decoration: none;">🔗 查看官网详情</a></div>` : ''}
+            `;
+            document.getElementById('modal-overlay').classList.add('show');
+        }
+
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+
+        async function refreshData(onlyCharacters = false) {
+            const btn = document.querySelector('.refresh-btn');
+            if (btn) {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            }
+            
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.classList.add('show');
+            
+            const loadingText = document.querySelector('.loading-text');
+            const loadingSubtext = document.querySelector('.loading-subtext');
+            const originalText = loadingText.textContent;
+            const originalSubtext = loadingSubtext.textContent;
+
+            try {
+                const url = onlyCharacters ? '/api/crawl/characters' : '/api/crawl?force=true';
+                
+                if (onlyCharacters) {
+                    loadingText.textContent = '正在更新角色数据...';
+                    loadingSubtext.textContent = '读取伟大航路的悬赏单...（可能需要1-2分钟）';
+                } else {
+                    loadingText.textContent = '正在探索伟大航路...';
+                    loadingSubtext.textContent = '收集所有海域的情报...（可能需要2-5分钟，请耐心等待）';
+                }
+                
+                // 设置5分钟超时
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    alert('请求超时，请稍后重试。爬取数据需要较长时间，请耐心等待。');
+                }, 5 * 60 * 1000);
+                
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    await fetchData();
+                    
+                    if (onlyCharacters) {
+                        alert(`角色数据刷新成功！\n角色数量: ${result.charactersCount} 个`);
+                    } else {
+                        alert(`刷新成功！\n角色: ${result.charactersCount || 0} 个\n新闻: ${result.newsCount || 0} 条\n恶魔果实: ${result.devilFruitsCount || 0} 个\n动画: ${result.animeEpisodesCount || 0} 集\n漫画: ${result.mangaChaptersCount || 0} 话\n事件: ${result.eventsCount || 0} 个`);
+                    }
+                } else {
+                    alert('刷新失败: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                if (error.name === 'AbortError') {
+                    // 超时已经处理过了
+                } else {
+                    alert('刷新失败，请稍后重试：' + error.message);
+                }
+            }
+            finally { 
+                if (btn) {
+                    btn.classList.remove('loading'); 
+                    btn.disabled = false; 
+                }
+                loadingText.textContent = originalText;
+                loadingSubtext.textContent = originalSubtext;
+                loadingOverlay.classList.remove('show');
+            }
+        }
+
+        function exportCharacters() {
+            window.location.href = '/api/export/characters';
+        }
+
+        function exportDevilFruits() {
+            window.location.href = '/api/export/devil-fruits';
+        }
+
+        let compareList = [];
+
+        function toggleTheme() {
+            const body = document.body;
+            const isLight = body.classList.contains('light-theme');
+            if (isLight) {
+                body.classList.remove('light-theme');
+                localStorage.setItem('onepiece_theme', 'dark');
+            } else {
+                body.classList.add('light-theme');
+                localStorage.setItem('onepiece_theme', 'light');
+            }
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('onepiece_theme');
+            if (theme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        function updateUserArea() {
+            const area = document.getElementById('user-area');
+            if (currentUser) {
+                area.innerHTML = `
+                    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+                    <div class="user-info">
+                        <div class="user-avatar">${currentUser.username.charAt(0).toUpperCase()}</div>
+                        <span>${currentUser.username}</span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                `;
+            } else {
+                area.innerHTML = '<button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button><button class="login-btn" onclick="showAuthModal(\'login\')">🔐 登录</button>';
+            }
+        }
+
+        async function renderRanking() {
+            const filter = document.getElementById('ranking-filter').value;
+            
+            try {
+                const response = await fetch('/api/characters?limit=100');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    document.getElementById('ranking-list').innerHTML = `<div class="empty-state"><h3>获取角色数据失败</h3></div>`;
+                    return;
+                }
+                
+                let characters = result.data;
+                
+                if (filter) {
+                    characters = characters.filter(c => c.organization && c.organization.includes(filter));
+                }
+                
+                characters.sort((a, b) => {
+                    const bountyA = parseBounty(a.bounty);
+                    const bountyB = parseBounty(b.bounty);
+                    return bountyB - bountyA;
+                });
+                
+                const list = document.getElementById('ranking-list');
+                if (characters.length === 0) {
+                    list.innerHTML = `<div class="empty-state"><h3>暂无角色数据</h3></div>`;
+                    return;
+                }
+                
+                list.innerHTML = characters.slice(0, 50).map((c, index) => {
+                    const rankClass = index === 0 ? 'top1' : index === 1 ? 'top2' : index === 2 ? 'top3' : 'other';
+                    return `
+                        <div class="ranking-item" onclick="showCharacterDetail('${encodeURIComponent(c.name)}')">
+                            <div class="ranking-rank ${rankClass}">${index + 1}</div>
+                            <div class="ranking-avatar" style="width:50px;height:50px;border-radius:8px;background:linear-gradient(135deg,#4a3728,#2d1f14);display:flex;align-items:center;justify-content:center;color:#d4af37;font-size:10px;font-weight:bold;text-align:center;border:2px solid #d4af37;overflow:hidden;position:absolute;">${c.name.substring(0, 2)}</div>
+                            ${c.localImage ? `<img src="${c.localImage}" alt="${c.name}" class="ranking-img" onload="this.classList.add('loaded')" onerror="this.style.display='none'; this.classList.add('loaded')" style="position:relative;z-index:1;">` : ''}
+                            <div class="ranking-info">
+                                <div class="ranking-name">${c.name}</div>
+                                <div class="ranking-bounty">${c.bounty || '-'}</div>
+                            </div>
+                            ${c.organization ? `<div style="font-size: 0.8rem; opacity: 0.7;">${c.organization}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error fetching ranking:', error);
+                document.getElementById('ranking-list').innerHTML = `<div class="empty-state"><h3>获取角色数据失败</h3></div>`;
+            }
+        }
+
+        function parseBounty(bounty) {
+            if (!bounty) return 0;
+            let value = 0;
+            const okuMatch = bounty.match(/(\d+(?:\.\d+)?)\s*億/);
+            const manMatch = bounty.match(/(\d+(?:\.\d+)?)\s*万/);
+            if (okuMatch) value += parseFloat(okuMatch[1]) * 100000000;
+            if (manMatch) value += parseFloat(manMatch[1]) * 10000;
+            return value;
+        }
+
+        async function renderStatistics() {
+            try {
+                const [charsResponse, fruitsResponse, newsResponse] = await Promise.all([
+                    fetch('/api/characters?limit=100'),
+                    fetch('/api/devil-fruits?limit=100'),
+                    fetch('/api/news?limit=100')
+                ]);
+                
+                const charsResult = await charsResponse.json();
+                const fruitsResult = await fruitsResponse.json();
+                const newsResult = await newsResponse.json();
+                
+                if (!charsResult.success || !fruitsResult.success || !newsResult.success) {
+                    return;
+                }
+                
+                const characters = charsResult.data;
+                const fruits = fruitsResult.data;
+                const news = newsResult.data;
+                
+                document.getElementById('stat-characters').textContent = characters.length;
+                document.getElementById('stat-devil-fruits').textContent = fruits.length;
+                document.getElementById('stat-news').textContent = news.length;
+                
+                let totalBounty = 0;
+                characters.forEach(c => {
+                    totalBounty += parseBounty(c.bounty);
+                });
+                document.getElementById('stat-total-bounty').textContent = formatBounty(totalBounty);
+                
+                renderBountyChart(characters);
+                renderOrganizationChart(characters);
+                renderBirthdayChart(characters);
+                renderFruitTypeChart(fruits);
+                
+            } catch (error) {
+                console.error('Error rendering statistics:', error);
+            }
+        }
+        
+        function parseBounty(bounty) {
+            if (!bounty) return 0;
+            let value = 0;
+            const okuMatch = bounty.match(/(\d+(?:\.\d+)?)\s*億/);
+            const manMatch = bounty.match(/(\d+(?:\.\d+)?)\s*万/);
+            if (okuMatch) value += parseFloat(okuMatch[1]) * 100000000;
+            if (manMatch) value += parseFloat(manMatch[1]) * 10000;
+            return value;
+        }
+        
+        function formatBounty(value) {
+            if (value >= 100000000) {
+                return (value / 100000000).toFixed(2) + '億';
+            } else if (value >= 10000) {
+                return (value / 10000).toFixed(0) + '万';
+            }
+            return value.toString();
+        }
+        
+        let charts = {};
+        
+        function renderBountyChart(characters) {
+            const ctx = document.getElementById('bounty-chart');
+            if (charts.bounty) charts.bounty.destroy();
+            
+            const bins = { '0-1億': 0, '1-5億': 0, '5-10億': 0, '10-20億': 0, '20-30億': 0, '30億+': 0 };
+            
+            characters.forEach(c => {
+                const bounty = parseBounty(c.bounty);
+                if (bounty < 100000000) bins['0-1億']++;
+                else if (bounty < 500000000) bins['1-5億']++;
+                else if (bounty < 1000000000) bins['5-10億']++;
+                else if (bounty < 2000000000) bins['10-20億']++;
+                else if (bounty < 3000000000) bins['20-30億']++;
+                else bins['30億+']++;
+            });
+            
+            charts.bounty = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(bins),
+                    datasets: [{
+                        label: '角色数量',
+                        data: Object.values(bins),
+                        backgroundColor: [
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(251, 191, 36, 0.7)',
+                            'rgba(251, 146, 60, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(220, 38, 38, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 222, 128, 1)',
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(251, 191, 36, 1)',
+                            'rgba(251, 146, 60, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(220, 38, 38, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderOrganizationChart(characters) {
+            const ctx = document.getElementById('organization-chart');
+            if (charts.organization) charts.organization.destroy();
+            
+            const orgCounts = {};
+            characters.forEach(c => {
+                const org = c.organization || '未知';
+                orgCounts[org] = (orgCounts[org] || 0) + 1;
+            });
+            
+            charts.organization = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(orgCounts),
+                    datasets: [{
+                        data: Object.values(orgCounts),
+                        backgroundColor: [
+                            'rgba(233, 69, 96, 0.7)',
+                            'rgba(0, 210, 255, 0.7)',
+                            'rgba(255, 215, 0, 0.7)',
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(255, 105, 180, 0.7)',
+                            'rgba(148, 163, 184, 0.7)',
+                            'rgba(251, 146, 60, 0.7)',
+                            'rgba(139, 92, 246, 0.7)'
+                        ],
+                        borderColor: '#1a1a2e',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', padding: 15, font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderBirthdayChart(characters) {
+            const ctx = document.getElementById('birthday-chart');
+            if (charts.birthday) charts.birthday.destroy();
+            
+            const monthCounts = new Array(12).fill(0);
+            characters.forEach(c => {
+                if (c.birthday) {
+                    const match = c.birthday.match(/(\d+)月/);
+                    if (match) {
+                        const month = parseInt(match[1]) - 1;
+                        if (month >= 0 && month < 12) {
+                            monthCounts[month]++;
+                        }
+                    }
+                }
+            });
+            
+            charts.birthday = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    datasets: [{
+                        label: '生日角色数',
+                        data: monthCounts,
+                        borderColor: 'rgba(233, 69, 96, 1)',
+                        backgroundColor: 'rgba(233, 69, 96, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(233, 69, 96, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#fff', stepSize: 1 },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderFruitTypeChart(fruits) {
+            const ctx = document.getElementById('fruit-type-chart');
+            if (charts.fruitType) charts.fruitType.destroy();
+            
+            const typeCounts = {};
+            fruits.forEach(f => {
+                const type = f.type || '未知';
+                typeCounts[type] = (typeCounts[type] || 0) + 1;
+            });
+            
+            charts.fruitType = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(typeCounts),
+                    datasets: [{
+                        data: Object.values(typeCounts),
+                        backgroundColor: [
+                            'rgba(233, 69, 96, 0.8)',
+                            'rgba(0, 210, 255, 0.8)',
+                            'rgba(74, 222, 128, 0.8)',
+                            'rgba(148, 163, 184, 0.8)'
+                        ],
+                        borderColor: '#1a1a2e',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', padding: 15, font: { size: 14 } }
+                        }
+                    }
+                }
+            });
+        }
+        
+        async function renderRelationGraph() {
+            const characterSelect = document.getElementById('relation-character');
+            const typeSelect = document.getElementById('relation-type');
+            
+            if (characterSelect.options.length === 1) {
+                try {
+                    const response = await fetch('/api/characters?limit=100');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        characterSelect.innerHTML = '<option value="">选择一个角色查看关系</option>' +
+                            result.data.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                    }
+                } catch (error) {
+                    console.error('Error loading characters:', error);
+                }
+            }
+            
+            const selectedName = characterSelect.value;
+            if (!selectedName) {
+                document.getElementById('relation-graph').innerHTML = '';
+                document.getElementById('relation-list').innerHTML = '<div class="empty-state"><h3>请选择一个角色查看关系图</h3></div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/characters?limit=100');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    return;
+                }
+                
+                const characters = result.data;
+                const selectedChar = characters.find(c => c.name === selectedName);
+                
+                const relations = [];
+                const relationColors = {
+                    'same-org': '#4ade80',
+                    'family': '#e94560',
+                    'rival': '#f59e0b',
+                    'friend': '#06b6d4',
+                    'crew': '#8b5cf6'
+                };
+                
+                characters.forEach(c => {
+                    if (c.name === selectedName) return;
+                    
+                    let relationType = null;
+                    let relationLabel = '';
+                    
+                    if (selectedChar.organization && c.organization && selectedChar.organization === c.organization) {
+                        relationType = 'same-org';
+                        relationLabel = '同组织';
+                    } else if (selectedChar.family && c.family && selectedChar.family === c.family) {
+                        relationType = 'family';
+                        relationLabel = '血缘关系';
+                    } else if (selectedChar.rival && c.name.includes(selectedChar.rival) || c.rival && selectedChar.name.includes(c.rival)) {
+                        relationType = 'rival';
+                        relationLabel = '对手';
+                    }
+                    
+                    if (relationType && (typeSelect.value === 'all' || typeSelect.value === relationType)) {
+                        relations.push({
+                            character: c,
+                            type: relationType,
+                            label: relationLabel,
+                            color: relationColors[relationType]
+                        });
+                    }
+                });
+                
+                renderRelationSVG(selectedChar, relations);
+                renderRelationList(selectedChar, relations);
+                
+            } catch (error) {
+                console.error('Error rendering relation graph:', error);
+            }
+        }
+        
+        function renderRelationSVG(mainChar, relations) {
+            const svg = document.getElementById('relation-graph');
+            const container = svg.parentElement;
+            const width = container.clientWidth || 800;
+            const height = 500;
+            
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+            
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) * 0.35;
+            
+            let svgContent = '';
+            
+            svgContent += `<defs>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>`;
+            
+            relations.forEach((rel, index) => {
+                const angle = (index / relations.length) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                svgContent += `<line x1="${centerX}" y1="${centerY}" x2="${x}" y2="${y}" 
+                    stroke="${rel.color}" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>`;
+                
+                svgContent += `<circle cx="${x}" cy="${y}" r="40" fill="${rel.color}" opacity="0.2" filter="url(#glow)"/>`;
+                
+                svgContent += `<image x="${x - 30}" y="${y - 30}" width="60" height="60" 
+                    href="${rel.character.localImage || rel.character.image || 'https://via.placeholder.com/60'}" 
+                    style="border-radius: 50%; object-fit: cover;" />`;
+                
+                svgContent += `<text x="${x}" y="${y + 55}" text-anchor="middle" fill="#fff" font-size="12">${rel.character.name}</text>`;
+                
+                svgContent += `<text x="${x}" y="${y + 72}" text-anchor="middle" fill="${rel.color}" font-size="10">${rel.label}</text>`;
+            });
+            
+            svgContent += `<circle cx="${centerX}" cy="${centerY}" r="50" fill="#e94560" opacity="0.3" filter="url(#glow)"/>`;
+            
+            svgContent += `<image x="${centerX - 35}" y="${centerY - 35}" width="70" height="70" 
+                href="${mainChar.localImage || mainChar.image || 'https://via.placeholder.com/70'}" 
+                style="border-radius: 50%; object-fit: cover; border: 3px solid #e94560;" />`;
+            
+            svgContent += `<text x="${centerX}" y="${centerY + 60}" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">${mainChar.name}</text>`;
+            svgContent += `<text x="${centerX}" y="${centerY + 78}" text-anchor="middle" fill="#ffd93d" font-size="12">${mainChar.organization || '无组织'}</text>`;
+            
+            svg.innerHTML = svgContent;
+        }
+        
+        function renderRelationList(mainChar, relations) {
+            const list = document.getElementById('relation-list');
+            
+            if (relations.length === 0) {
+                list.innerHTML = '<div class="empty-state"><h3>未找到相关角色</h3></div>';
+                return;
+            }
+            
+            let html = '<h3 style="margin-bottom: 15px;">' + mainChar.name + ' 的关系网 (' + relations.length + '人)</h3>';
+            relations.forEach(rel => {
+                const bgColor = rel.color + '30';
+                html += '<div class="relation-card" onclick="showCharacterDetail(\'' + rel.character.name + '\')">';
+                html += '<img data-src="' + (rel.character.localImage || rel.character.image || 'https://via.placeholder.com/50') + '" alt="' + rel.character.name + '" class="lazy" loading="lazy" onload="this.classList.remove(\'lazy\')" onerror="this.src=\'https://via.placeholder.com/50\'; this.classList.remove(\'lazy\')">';
+                html += '<div>';
+                html += '<div style="font-weight: bold;">' + rel.character.name + '</div>';
+                html += '<div style="font-size: 0.9rem; opacity: 0.7;">' + (rel.character.organization || '-') + '</div>';
+                html += '</div>';
+                html += '<span class="relation-tag" style="background: ' + bgColor + '; color: ' + rel.color + ';">' + rel.label + '</span>';
+                html += '</div>';
+            });
+            list.innerHTML = html;
+        }
+        
+        // ==================== Agent 智能助手 ====================
+        
+        async function askAgent(query) {
+            const input = document.getElementById('agent-input');
+            if (!query) {
+                query = input.value.trim();
+            }
+            // 发送后清空输入框
+            input.value = '';
+            
+            if (!query) return;
+
+            // 保存查询历史
+            saveQueryHistory(query);
+
+            const chat = document.getElementById('agent-chat');
+            
+            // 添加用户消息
+            const userMsg = document.createElement('div');
+            userMsg.className = 'agent-message user';
+            userMsg.innerHTML = `
+                <div class="agent-avatar">👤</div>
+                <div class="agent-content"><p>${escapeHtml(query)}</p></div>
+            `;
+            chat.appendChild(userMsg);
+            
+            // 添加加载动画
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'agent-message agent';
+            loadingMsg.innerHTML = `
+                <div class="agent-avatar">🤖</div>
+                <div class="agent-content">
+                    <div class="agent-loading">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            chat.appendChild(loadingMsg);
+            
+            chat.scrollTop = chat.scrollHeight;
+            
+            try {
+                const response = await fetch('/api/agent/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+                
+                const result = await response.json();
+                
+                // 移除加载动画
+                chat.removeChild(loadingMsg);
+                
+                // 添加回复消息
+                const agentMsg = document.createElement('div');
+                agentMsg.className = 'agent-message agent';
+                
+                let answerHtml = `<p>${escapeHtml(result.answer || result.error || '未知错误')}</p>`;
+                
+                // 如果有数据，添加详情
+                if (result.success && result.data) {
+                    if (Array.isArray(result.data)) {
+                        if (result.data.length > 0) {
+                            currentQueryResult = result.data; // 保存查询结果
+                            answerHtml += `
+                                <div class="result-toolbar">
+                                    <span class="result-count">找到 ${result.data.length} 个结果</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <div class="view-toggle">
+                                            <button class="${currentResultView === 'table' ? 'active' : ''}" onclick="toggleResultView('table', this)">📊 表格</button>
+                                            <button class="${currentResultView === 'cards' ? 'active' : ''}" onclick="toggleResultView('cards', this)">🎴 卡片</button>
+                                        </div>
+                                        <button onclick="exportQueryResult('json')" style="background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem;">📥 JSON</button>
+                                        <button onclick="exportQueryResult('csv')" style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem;">📥 CSV</button>
+                                    </div>
+                                </div>
+                            `;
+                            answerHtml += `<div id="result-display">${renderResultData(result.data)}</div>`;
+                        }
+                    }
+                }
+                
+                agentMsg.innerHTML = `
+                    <div class="agent-avatar">🤖</div>
+                    <div class="agent-content">${answerHtml}</div>
+                `;
+                chat.appendChild(agentMsg);
+                
+            } catch (error) {
+                chat.removeChild(loadingMsg);
+                
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'agent-message agent';
+                errorMsg.innerHTML = `
+                    <div class="agent-avatar">🤖</div>
+                    <div class="agent-content"><p>抱歉，查询时出现错误：${escapeHtml(error.message)}</p></div>
+                `;
+                chat.appendChild(errorMsg);
+            }
+            
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function sendAgentMessage() {
+            const input = document.getElementById('agent-input');
+            const query = input.value.trim();
+            if (query) {
+                askAgent(query);
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 渲染查询结果数据
+        function renderResultData(data) {
+            if (!data || data.length === 0) return '';
+
+            if (currentResultView === 'table') {
+                return renderResultTable(data);
+            } else {
+                return renderResultCards(data);
+            }
+        }
+
+        // 渲染表格视图
+        function renderResultTable(data) {
+            const maxShow = 15; // 表格最多显示15个
+            const displayData = data.slice(0, maxShow);
+
+            let html = '<table class="result-table">';
+            html += '<thead><tr>';
+            html += '<th>姓名</th>';
+            html += '<th>悬赏金</th>';
+            html += '<th>所属组织</th>';
+            html += '<th>恶魔果实</th>';
+            html += '</tr></thead>';
+            html += '<tbody>';
+
+            displayData.forEach(item => {
+                html += '<tr onclick="showCharacterDetail(\'' + escapeHtml(item.name) + '\')" style="cursor: pointer;">';
+                html += '<td>' + escapeHtml(item.name) + '</td>';
+                html += '<td>' + (item.bounty || '-') + '</td>';
+                html += '<td>' + (item.organization || '-') + '</td>';
+                html += '<td>' + (item.devilFruit || '-') + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+
+            if (data.length > maxShow) {
+                html += `<p style="color: rgba(255,255,255,0.5); text-align: center; margin-top: 10px; font-size: 0.85rem;">
+                    显示前 ${maxShow} 个结果，共 ${data.length} 个
+                </p>`;
+            }
+
+            return html;
+        }
+
+        // 渲染卡片视图
+        function renderResultCards(data) {
+            const maxShow = 20; // 卡片最多显示20个
+            const displayData = data.slice(0, maxShow);
+
+            let html = '<div class="result-cards">';
+
+            displayData.forEach(item => {
+                html += '<div class="result-card" onclick="showCharacterDetail(\'' + escapeHtml(item.name) + '\')">';
+                html += '<img src="' + (item.localImage || 'https://via.placeholder.com/60') + '" alt="' + escapeHtml(item.name) + '" class="result-card-image" onload="this.classList.add(\'loaded\')" onerror="this.style.display=\'none\'">';
+                html += '<div class="result-card-name">' + escapeHtml(item.name) + '</div>';
+                html += '<div class="result-card-info">' + (item.bounty || '无悬赏金') + '</div>';
+                html += '<div class="result-card-info">' + (item.organization || '无组织') + '</div>';
+                html += '</div>';
+            });
+
+            html += '</div>';
+
+            if (data.length > maxShow) {
+                html += `<p style="color: rgba(255,255,255,0.5); text-align: center; margin-top: 10px; font-size: 0.85rem;">
+                    显示前 ${maxShow} 个结果，共 ${data.length} 个
+                </p>`;
+            }
+
+            return html;
+        }
+
+        // 切换结果展示模式
+        function toggleResultView(view, btn) {
+            currentResultView = view;
+
+            // 更新按钮状态
+            const buttons = btn.parentElement.querySelectorAll('button');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // 使用保存的数据重新渲染结果
+            const resultDisplay = document.getElementById('result-display');
+            if (resultDisplay && currentQueryResult) {
+                resultDisplay.innerHTML = renderResultData(currentQueryResult);
+            }
+        }
+
+        // 导出查询结果
+        function exportQueryResult(format) {
+            if (!currentQueryResult || currentQueryResult.length === 0) {
+                alert('没有可导出的数据');
+                return;
+            }
+
+            if (format === 'json') {
+                exportAsJson();
+            } else if (format === 'csv') {
+                exportAsCsv();
+            }
+        }
+
+        // 导出为JSON
+        function exportAsJson() {
+            const dataStr = JSON.stringify(currentQueryResult, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `海贼王查询结果_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 导出为CSV
+        function exportAsCsv() {
+            const headers = ['姓名', '悬赏金', '所属组织', '恶魔果实', '年龄', '身高', '生日'];
+            const keys = ['name', 'bounty', 'organization', 'devilFruit', 'age', 'height', 'birthday'];
+
+            let csv = '\ufeff'; // BOM for Excel
+            csv += headers.join(',') + '\n';
+
+            currentQueryResult.forEach(item => {
+                const row = keys.map(key => {
+                    let value = item[key] || '-';
+                    // 处理包含逗号和引号的情况
+                    if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
+                csv += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `海贼王查询结果_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ==================== 查询历史记录管理 ====================
+
+        // 保存查询历史到localStorage
+        function saveQueryHistory(query) {
+            if (!query || query.trim() === '') return;
+
+            let history = JSON.parse(localStorage.getItem('agentQueryHistory') || '[]');
+
+            // 添加新记录
+            const record = {
+                query: query.trim(),
+                timestamp: Date.now()
+            };
+
+            // 避免重复记录
+            history = history.filter(h => h.query !== query.trim());
+
+            // 添加到开头
+            history.unshift(record);
+
+            // 只保留最近10条
+            history = history.slice(0, 10);
+
+            localStorage.setItem('agentQueryHistory', JSON.stringify(history));
+
+            // 更新显示
+            displayQueryHistory();
+        }
+
+        // 显示查询历史
+        function displayQueryHistory() {
+            const historyList = document.getElementById('query-history');
+            const history = JSON.parse(localStorage.getItem('agentQueryHistory') || '[]');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="no-history">暂无查询历史</div>';
+                return;
+            }
+
+            historyList.innerHTML = history.map(record => {
+                const timeAgo = getTimeAgo(record.timestamp);
+                return `
+                    <div class="history-item" onclick="askAgent('${escapeHtml(record.query)}')">
+                        <div class="history-item-query">${escapeHtml(record.query)}</div>
+                        <div class="history-item-time">${timeAgo}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 计算时间差
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+
+            const date = new Date(timestamp);
+            return `${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+
+        // 清空查询历史
+        function clearQueryHistory() {
+            if (confirm('确定要清空所有查询历史吗？')) {
+                localStorage.removeItem('agentQueryHistory');
+                displayQueryHistory();
+            }
+        }
+
+        let currentShareData = null;
+        
+        function toggleShareMenu() {
+            const menu = document.getElementById('share-menu');
+            menu.classList.toggle('show');
+        }
+        
+        function closeShareMenu() {
+            document.getElementById('share-menu').classList.remove('show');
+        }
+        
+        function setShareData(data) {
+            currentShareData = data;
+        }
+        
+        async function shareToWechat() {
+            closeShareMenu();
+            if (!currentShareData) return;
+            
+            const text = `海贼王角色：${currentShareData.name}\n悬赏金：${currentShareData.bounty || '-'}\n所属：${currentShareData.organization || '-'}`;
+            await navigator.clipboard.writeText(text);
+            showToast('已复制到剪贴板，可粘贴到微信分享');
+        }
+        
+        async function shareToWeibo() {
+            closeShareMenu();
+            if (!currentShareData) return;
+            
+            const text = `海贼王角色：${currentShareData.name}\n悬赏金：${currentShareData.bounty || '-'}\n所属：${currentShareData.organization || '-'}\n#海贼王#`;
+            const url = `https://service.weibo.com/share/share.php?content=${encodeURIComponent(text)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+        
+        async function shareToQQ() {
+            closeShareMenu();
+            if (!currentShareData) return;
+            
+            const text = `海贼王角色：${currentShareData.name}\n悬赏金：${currentShareData.bounty || '-'}\n所属：${currentShareData.organization || '-'}`;
+            await navigator.clipboard.writeText(text);
+            showToast('已复制到剪贴板，可粘贴到QQ分享');
+        }
+        
+        async function copyShareLink() {
+            closeShareMenu();
+            const url = window.location.origin + '/?character=' + encodeURIComponent(currentShareData?.name || '');
+            await navigator.clipboard.writeText(url);
+            showToast('链接已复制到剪贴板');
+        }
+        
+        async function shareAsImage() {
+            closeShareMenu();
+            if (!currentShareData) return;
+            
+            showToast('正在生成分享图片...');
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 500;
+            
+            ctx.fillStyle = '#0c1445';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#1a1a2e');
+            gradient.addColorStop(1, '#0c1445');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#e94560';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('WANTED', canvas.width / 2, 50);
+            
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = '24px Arial';
+            ctx.fillText(currentShareData.name, canvas.width / 2, 85);
+            
+            if (currentShareData.image) {
+                try {
+                    const img = await loadImage(currentShareData.image);
+                    ctx.drawImage(img, 50, 100, 300, 200);
+                } catch (e) {
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(50, 100, 300, 200);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '16px Arial';
+                    ctx.fillText('图片加载失败', canvas.width / 2, 200);
+                }
+            }
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = '18px Arial';
+            ctx.fillText(`悬赏金: ${currentShareData.bounty || '-'}`, canvas.width / 2, 330);
+            ctx.fillText(`所属: ${currentShareData.organization || '-'}`, canvas.width / 2, 360);
+            ctx.fillText(`生日: ${currentShareData.birthday || '-'}`, canvas.width / 2, 390);
+            ctx.fillText(`果实: ${currentShareData.devilFruit || '-'}`, canvas.width / 2, 420);
+            
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.font = '12px Arial';
+            ctx.fillText('海贼王官网数据', canvas.width / 2, 470);
+            
+            const link = document.createElement('a');
+            link.download = `${currentShareData.name}_share.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            showToast('分享图片已下载');
+        }
+        
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.8);
+                color: #fff;
+                padding: 15px 25px;
+                border-radius: 10px;
+                font-size: 14px;
+                z-index: 99999;
+                animation: fadeIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+        
+        async function renderBirthdayCalendar() {
+            const monthFilter = document.getElementById('birthday-month').value;
+            const calendar = document.getElementById('birthday-calendar');
+            const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+            
+            calendar.innerHTML = '<div class="empty-state"><h3>加载中...</h3></div>';
+            
+            try {
+                const response = await fetch('/api/characters?limit=100');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    calendar.innerHTML = '<div class="empty-state"><h3>获取角色数据失败</h3></div>';
+                    return;
+                }
+                
+                const birthdays = {};
+                result.data.forEach(c => {
+                    if (c.birthday) {
+                        const match = c.birthday.match(/(\d+)月(\d+)日/);
+                        if (match) {
+                            const month = parseInt(match[1]);
+                            const day = parseInt(match[2]);
+                            if (!birthdays[month]) birthdays[month] = {};
+                            if (!birthdays[month][day]) birthdays[month][day] = [];
+                            birthdays[month][day].push(c);
+                        }
+                    }
+                });
+                
+                let html = '';
+                months.forEach((monthName, index) => {
+                    const month = index + 1;
+                    if (monthFilter && parseInt(monthFilter) !== month) return;
+                    
+                    html += `<div class="calendar-month">
+                        <div class="calendar-month-title">${monthName}</div>
+                        <div class="calendar-days">`;
+                    
+                    for (let day = 1; day <= 31; day++) {
+                        const hasBirthday = birthdays[month] && birthdays[month][day];
+                        const dayClass = hasBirthday ? 'has-birthday' : '';
+                        html += `<div class="calendar-day ${dayClass}" onclick="showBirthdayCharacters(${month}, ${day})">${day}</div>`;
+                    }
+                    
+                    html += `</div></div>`;
+                });
+                
+                calendar.innerHTML = html;
+                document.getElementById('birthday-characters').innerHTML = '';
+            } catch (error) {
+                console.error('Error loading birthday calendar:', error);
+                calendar.innerHTML = '<div class="empty-state"><h3>获取角色数据失败</h3></div>';
+            }
+        }
+
+        async function showBirthdayCharacters(month, day) {
+            const container = document.getElementById('birthday-characters');
+            container.innerHTML = '<div class="empty-state"><h3>加载中...</h3></div>';
+            
+            try {
+                const response = await fetch('/api/characters?limit=100');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    container.innerHTML = '<div class="empty-state"><h3>获取角色数据失败</h3></div>';
+                    return;
+                }
+                
+                const characters = result.data.filter(c => {
+                    if (!c.birthday) return false;
+                    const match = c.birthday.match(/(\d+)月(\d+)日/);
+                    if (!match) return false;
+                    const bMonth = parseInt(match[1]);
+                    const bDay = parseInt(match[2]);
+                    return bMonth === month && bDay === day;
+                });
+                
+                if (characters.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><h3>暂无角色在${month}月${day}日生日</h3></div>`;
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <h3 style="margin-bottom: 15px; color: #e94560;">🎂 ${month}月${day}日生日的角色</h3>
+                    <div class="grid">
+                        ${characters.map((c, index) => `
+                            <div class="card-container">
+                                <div class="card" onclick="this.classList.toggle('flipped')">
+                                    <div class="card-face card-front">
+                                        <div class="card-header">
+                                            <div class="card-wanted">WANTED</div>
+                                            <div class="card-id">ID: ${String(index + 1).padStart(3, '0')}</div>
+                                        </div>
+                                        <div class="card-photo-frame">
+                                            <div class="card-avatar">${c.name}</div>
+                                            ${c.localImage ? `<img src="${c.localImage}" alt="${c.name}" class="card-img" onload="this.classList.add('loaded'); this.style.background='none'" onerror="this.style.display='none'; this.classList.add('loaded')">` : ''}
+                                            <div class="card-photo-label">PHOTO</div>
+                                        </div>
+                                        <div class="card-content">
+                                            <h3 class="card-title">${c.name}</h3>
+                                            <div class="card-bounty">${c.bounty || '-'}</div>
+                                            <p class="card-info"><strong>生日:</strong> ${c.birthday}</p>
+                                        </div>
+                                        <div class="card-seal"></div>
+                                    </div>
+                                    <div class="card-face card-back">
+                                        <div class="card-back-header">
+                                            <div class="card-back-title">${c.name}</div>
+                                        </div>
+                                        <div class="card-back-info">
+                                            <p><span class="label">悬赏金</span>${c.bounty || '-'}</p>
+                                            <p><span class="label">所属</span>${c.organization || '-'}</p>
+                                            <p><span class="label">生日</span>${c.birthday || '-'}</p>
+                                            <p><span class="label">果实</span>${c.devilFruit || '-'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading birthday characters:', error);
+                container.innerHTML = '<div class="empty-state"><h3>获取角色数据失败</h3></div>';
+            }
+        }
+
+        function showCompareModal() {
+            renderCompareCharacterList();
+            document.getElementById('compare-modal').classList.add('show');
+        }
+
+        function closeCompareModal() {
+            document.getElementById('compare-modal').classList.remove('show');
+        }
+
+        function renderCompareCharacterList() {
+            const search = document.getElementById('compare-search').value.toLowerCase();
+            const list = document.getElementById('compare-character-list');
+            
+            let characters = data.characters.filter(c => 
+                !search || c.name.toLowerCase().includes(search)
+            );
+            
+            list.innerHTML = characters.map(c => {
+                const isSelected = compareList.includes(c.name);
+                return `
+                    <div style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer;" 
+                         onclick="toggleCompareCharacter('${c.name}')">
+                        <input type="checkbox" ${isSelected ? 'checked' : ''} style="margin-right: 10px;">
+                        <img src="${c.localImage || c.image || ''}" alt="${c.name}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; margin-right: 10px; opacity: 0; transition: opacity 0.3s ease;" onload="this.style.opacity='1'" onerror="this.src='https://via.placeholder.com/40x40?text=No+Image'; this.style.opacity='1'">
+                        <span>${c.name}</span>
+                        ${c.bounty ? `<span style="margin-left: auto; color: #ffd93d;">${c.bounty}</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function debounceCompareSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => renderCompareCharacterList(), 300);
+        }
+
+        function toggleCompareCharacter(name) {
+            const index = compareList.indexOf(name);
+            if (index > -1) {
+                compareList.splice(index, 1);
+            } else if (compareList.length < 4) {
+                compareList.push(name);
+            }
+            renderCompareCharacterList();
+        }
+
+        async function startCompare() {
+            if (compareList.length < 2) {
+                alert('请至少选择两个角色进行对比');
+                return;
+            }
+            
+            closeCompareModal();
+            switchTab('compare');
+            
+            try {
+                const response = await fetch('/api/characters/compare', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ names: compareList })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    renderCompareResult(result.data);
+                }
+            } catch (error) {
+                console.error('Error comparing characters:', error);
+            }
+        }
+
+        function renderCompareResult(data) {
+            const selector = document.getElementById('compare-selector');
+            const result = document.getElementById('compare-result');
+            
+            selector.innerHTML = compareList.map(name => `
+                <div class="compare-chip">
+                    ${name}
+                    <span class="remove-btn" onclick="removeFromCompare('${name}')">×</span>
+                </div>
+            `).join('') + `<button class="compare-add-btn" onclick="showCompareModal()">➕ 添加</button>`;
+            
+            const fields = [
+                { key: 'name', label: '姓名' },
+                { key: 'bounty', label: '悬赏金' },
+                { key: 'age', label: '年龄' },
+                { key: 'height', label: '身高' },
+                { key: 'birthday', label: '生日' },
+                { key: 'bloodType', label: '血型' },
+                { key: 'hometown', label: '出身地' },
+                { key: 'organization', label: '所属' },
+                { key: 'occupation', label: '职位' },
+                { key: 'devilFruit', label: '恶魔果实' }
+            ];
+            
+            result.innerHTML = `
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>属性</th>
+                            ${data.characters.map(c => `<th>${c.name}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${fields.map(field => `
+                            <tr>
+                                <td>${field.label}</td>
+                                ${data.characters.map(c => `<td>${c[field.key] || '-'}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function removeFromCompare(name) {
+            const index = compareList.indexOf(name);
+            if (index > -1) {
+                compareList.splice(index, 1);
+                if (compareList.length < 2) {
+                    document.getElementById('compare-result').innerHTML = '<div class="empty-state"><h3>请至少选择两个角色进行对比</h3><button class="export-btn" onclick="showCompareModal()">➕ 添加角色</button></div>';
+                    renderCompareSelector();
+                } else {
+                    startCompare();
+                }
+            }
+        }
+
+        function renderCompareSelector() {
+            const selector = document.getElementById('compare-selector');
+            selector.innerHTML = `<button class="compare-add-btn" onclick="showCompareModal()">➕ 添加角色对比</button>`;
+        }
+
+        async function showNewsDetail(newsItem) {
+            document.getElementById('news-detail-title').textContent = newsItem.title;
+            
+            let content = `<div class="news-detail-content">`;
+            if (newsItem.image) {
+                content += `<img src="${newsItem.image}" alt="${newsItem.title}">`;
+            }
+            if (newsItem.date) {
+                content += `<p style="color: #ffd93d; font-size: 0.9rem;">📅 ${newsItem.date}</p>`;
+            }
+            if (newsItem.category) {
+                content += `<span style="background: rgba(233, 69, 96, 0.2); padding: 4px 10px; border-radius: 10px; color: #e94560; font-size: 0.85rem;">${newsItem.category}</span>`;
+            }
+            if (newsItem.description) {
+                content += `<p>${newsItem.description}</p>`;
+            }
+            content += `<div style="text-align: center; margin-top: 20px;"><a href="${newsItem.link}" target="_blank" style="color: #00d2ff; text-decoration: none;">🔗 查看官网原文</a></div>`;
+            content += `</div>`;
+            
+            document.getElementById('news-detail-content').innerHTML = content;
+            document.getElementById('news-detail-modal').classList.add('show');
+        }
+
+        function closeNewsDetailModal() {
+            document.getElementById('news-detail-modal').classList.remove('show');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+            ['characters', 'news', 'devil-fruits', 'anime', 'manga', 'events', 'favorites', 'ranking', 'birthday', 'compare', 'statistics', 'relations', 'agent', 'dashboard'].forEach(t => {
+                document.getElementById(`${t}-view`).style.display = t === tab ? 'block' : 'none';
+                const toolbar = document.getElementById(`${t}-toolbar`);
+                if (toolbar) toolbar.style.display = t === tab ? 'flex' : 'none';
+            });
+
+            if (tab === 'characters' && data.characters.length === 0) fetchCharacters();
+            else if (tab === 'news' && data.news.length === 0) fetchNews();
+            else if (tab === 'devil-fruits' && data.devilFruits.length === 0) fetchDevilFruits();
+            else if (tab === 'anime' && data.animeEpisodes.length === 0) fetchAnime();
+            else if (tab === 'manga' && data.mangaChapters.length === 0) fetchManga();
+            else if (tab === 'events' && data.events.length === 0) fetchEvents();
+            else if (tab === 'favorites') fetchFavorites();
+            else if (tab === 'ranking') renderRanking();
+            else if (tab === 'birthday') renderBirthdayCalendar();
+            else if (tab === 'compare') {
+                if (compareList.length < 2) {
+                    document.getElementById('compare-result').innerHTML = '<div class="empty-state"><h3>请选择角色进行对比</h3><button class="export-btn" onclick="showCompareModal()">➕ 添加角色</button></div>';
+                    renderCompareSelector();
+                } else {
+                    startCompare();
+                }
+            }
+            else if (tab === 'statistics') renderStatistics();
+            else if (tab === 'relations') renderRelationGraph();
+            else if (tab === 'agent') displayQueryHistory();
+            
+        }
+
+        function renderNews(pagination) {
+            const list = document.getElementById('news-list');
+            if (data.news.length === 0) {
+                list.innerHTML = `<div class="empty-state"><h3>暂无新闻数据</h3><p>点击上方"刷新数据"按钮获取最新数据</p></div>`;
+                document.getElementById('news-pagination').innerHTML = '';
+                return;
+            }
+            list.innerHTML = data.news.map(n => `
+                <div class="news-card" onclick="showNewsDetail(${JSON.stringify(n).replace(/'/g, "\\'")})">
+                    ${n.image ? `<img data-src="${n.image}" alt="${n.title}" class="news-img lazy" loading="lazy" onload="this.classList.add('loaded'); this.classList.remove('lazy')" onerror="this.style.display='none'">` : ''}
+                    <div class="news-content">
+                        <h3 class="news-title">${n.title}</h3>
+                        <div class="news-meta">
+                            <span class="category">${n.category}</span>
+                            <span class="date">📅 ${n.date}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            renderPagination('news-pagination', pagination, fetchNews);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            fetchData().then(() => {
+                initLazyLoad();
+            });
+        });
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') { closeModal(); closeAuthModal(); closeNewsDetailModal(); closeCompareModal(); } 
+        });
+    </script>
+</body>
+</html>
